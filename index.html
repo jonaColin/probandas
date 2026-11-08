@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tablero Ejecutivo KPIs | Probandas México - Sucursal Vallejo</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Sidebar Navigation -->
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="brand-badge">PROBANDAS MÉXICO</span>
+      <h1>SICT-Banda Plana</h1>
+      <p>Sucursal Nueva Industrial Vallejo</p>
+    </div>
+    <ul class="nav-links">
+      <li class="nav-section-label">Inteligencia de Negocios</li>
+      <li>
+        <a href="index.html" class="active">
+          <span>📊 Tablero Ejecutivo KPIs</span>
+          <span class="nav-pcc">RF-06</span>
+        </a>
+      </li>
+      <li class="nav-section-label">Módulos Operativos (POE-INV-01)</li>
+      <li>
+        <a href="recepcion.html">
+          <span>🏷️ 1. Recepción y Etiquetado</span>
+          <span class="nav-pcc">PCC-1</span>
+        </a>
+      </li>
+      <li>
+        <a href="corte.html">
+          <span>✂️ 2. Corte en Piso y Retazos</span>
+          <span class="nav-pcc">PCC-3</span>
+        </a>
+      </li>
+      <li>
+        <a href="consulta.html">
+          <span>🔍 3. Consulta y Trazabilidad</span>
+          <span class="nav-pcc">PCC-4</span>
+        </a>
+      </li>
+      <li>
+        <a href="conteos.html">
+          <span>📋 4. Conteos Cíclicos ABC</span>
+          <span class="nav-pcc">PCC-2</span>
+        </a>
+      </li>
+    </ul>
+    <div class="sidebar-footer">
+      <div class="erp-sync-box">
+        <div class="erp-sync-status">
+          <span class="dot-online"></span> Conector ERP BIND Activo
+        </div>
+        <div style="margin-top:4px; font-size:11px; color:#94a3b8;">
+          Fuente única de verdad (Reemplaza Excel local)
+        </div>
+      </div>
+      <div>POE-INV-01 • Code 128 • ABC</div>
+    </div>
+  </aside>
+
+  <!-- Main Content -->
+  <div class="main-wrapper">
+    <header class="topbar">
+      <div class="topbar-title">
+        <h2>Tablero Ejecutivo de Indicadores Clave de Desempeño (Power BI / BI Integrado)</h2>
+        <p>Monitoreo en tiempo real del universo de N = 20 Rollos Madre y Retazos Hijos • Sucursal Nueva Industrial Vallejo</p>
+      </div>
+      <div class="topbar-actions">
+        <span class="badge badge-info" id="liveCountBadge">Cargando inventario...</span>
+        <button class="btn btn-outline btn-sm" onclick="resetDemoData()">🔄 Restaurar Datos Demo</button>
+      </div>
+    </header>
+
+    <main class="content">
+      <!-- Nivel 1: 6 Tarjetas de Resumen Ejecutivo con Semáforos (Sección 5.5.1 y 5.5.3) -->
+      <section class="grid-kpis" id="kpiGrid"></section>
+
+      <!-- Nivel 2: Gráficos Comparativos ERI / OTIF y Análisis de Pareto / Mermas -->
+      <div class="grid-2">
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3>Evolución de Exactitud (ERI) vs. Entregas a Tiempo (OTIF) e Incidencia Tardía</h3>
+              <span class="subtitle">Comparativa Línea Base Diagnóstico (Mayo-Agosto 2026) vs. Prototipo Digital (Cap. V)</span>
+            </div>
+            <span class="badge badge-success">Meta ERI &gt; 95% | OTIF &gt; 92%</span>
+          </div>
+
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Periodo</th>
+                  <th>Fase del Proyecto</th>
+                  <th>Índice ERI (%)</th>
+                  <th>Entregas a Tiempo OTIF (%)</th>
+                  <th>Entregas Tardías (%)</th>
+                  <th>Tiempo Recuento Última Hora</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><strong>May - Jun 2026</strong></td>
+                  <td><span class="badge badge-danger">AS-IS (Excel + Papel)</span></td>
+                  <td class="mono" style="color:var(--danger);">78.4%</td>
+                  <td class="mono">76.0%</td>
+                  <td class="mono" style="color:var(--danger);">24.0%</td>
+                  <td>45 - 90 min / pedido</td>
+                </tr>
+                <tr>
+                  <td><strong>Jul - Ago 2026</strong></td>
+                  <td><span class="badge badge-danger">Diagnóstico Campo (Cap. IV)</span></td>
+                  <td class="mono" style="color:var(--danger);">81.2%</td>
+                  <td class="mono">79.5%</td>
+                  <td class="mono" style="color:var(--danger);">20.5%</td>
+                  <td>40 - 60 min / pedido</td>
+                </tr>
+                <tr>
+                  <td><strong>Oct 2026</strong></td>
+                  <td><span class="badge badge-warning">Piloto POE-INV-01 + ABC</span></td>
+                  <td class="mono" style="color:var(--warning);">91.0%</td>
+                  <td class="mono">89.8%</td>
+                  <td class="mono">10.2%</td>
+                  <td>8 min / pedido</td>
+                </tr>
+                <tr style="background:#f0fdf4;">
+                  <td><strong>Nov 2026 (Actual)</strong></td>
+                  <td><span class="badge badge-success">TO-BE (Prototipo Code 128)</span></td>
+                  <td class="mono" style="color:var(--success);" id="tblEriActual">95.5%</td>
+                  <td class="mono" style="color:var(--success);">94.2%</td>
+                  <td class="mono" style="color:var(--success);">5.8%</td>
+                  <td><strong>0 min (Consulta instantánea)</strong></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div style="margin-top:18px; padding-top:14px; border-top:1px solid var(--border);">
+            <div style="font-size:12.5px; font-weight:700; margin-bottom:10px; color:#334155;">
+              Distribución de Existencias por Clasificación ABC (Universo N = 20 Rollos Madre + Retazos Hijos)
+            </div>
+            <div class="grid-3" style="margin-bottom:0;" id="abcSummaryCards"></div>
+          </div>
+        </div>
+
+        <!-- Nivel 3: Diagrama de Barras Interactivo de Causas de Discrepancias (Pareto 80/20) y Merma por Polímero -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3>Monitoreo de Causas de Discrepancia (Pareto) y Mermas por Polímero</h3>
+              <span class="subtitle">Desglose por causa raíz estandarizada (Tabla 9 Cap. IV y Sección 5.3.3)</span>
+            </div>
+            <span class="badge badge-info">Principio 80/20</span>
+          </div>
+
+          <div style="margin-bottom: 18px;">
+            <div class="bar-row">
+              <div class="bar-row-top">
+                <span>1. Omisión de mermas y retazos en corte (PCC-3) — Mitigado por Balance Dimensional</span>
+                <span class="mono">39.4% (Vital)</span>
+              </div>
+              <div class="bar-track"><div class="bar-fill" style="width: 39.4%; background: var(--primary);"></div></div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-row-top">
+                <span>2. Ausencia de POE y variación de medición (m × mm) — Mitigado por POE-INV-01</span>
+                <span class="mono">22.7% (62.1% Acum.)</span>
+              </div>
+              <div class="bar-track"><div class="bar-fill" style="width: 22.7%; background: var(--primary);"></div></div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-row-top">
+                <span>3. Captura diferida en Excel / desconexión BIND — Mitigado por Escaneo Code 128</span>
+                <span class="mono">18.2% (80.3% Acum.)</span>
+              </div>
+              <div class="bar-track"><div class="bar-fill" style="width: 18.2%; background: var(--primary);"></div></div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-row-top">
+                <span>4. Falta de conteos cíclicos ABC y conciliación causa-raíz — Mitigado en Módulo 4</span>
+                <span class="mono">13.6% (93.9% Acum.)</span>
+              </div>
+              <div class="bar-track"><div class="bar-fill" style="width: 13.6%; background: #64748b;"></div></div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-row-top">
+                <span>5. Capacitación en piso y visibilidad de KPIs — Mitigado por Tablero Ejecutivo</span>
+                <span class="mono">6.1% (100% Acum.)</span>
+              </div>
+              <div class="bar-track"><div class="bar-fill" style="width: 6.1%; background: #94a3b8;"></div></div>
+            </div>
+          </div>
+
+          <div style="border-top:1px solid var(--border); padding-top:14px;">
+            <div style="font-size:12.5px; font-weight:700; margin-bottom:10px; color:#334155;">
+              Porcentaje de Merma Operativa por Familia de Polímero (Meta &lt; 3.0%)
+            </div>
+            <div class="bar-row">
+              <div class="bar-row-top"><span>Poliuretano (PU) — Grado Alimenticio / Antiestático</span><span class="mono" style="color:var(--success);">1.95%</span></div>
+              <div class="bar-track"><div class="bar-fill" style="width: 65%; background: var(--success);"></div></div>
+            </div>
+            <div class="bar-row">
+              <div class="bar-row-top"><span>PVC — Logística / Panadería / Fitness</span><span class="mono" style="color:var(--success);">2.20%</span></div>
+              <div class="bar-track"><div class="bar-fill" style="width: 73%; background: var(--success);"></div></div>
+            </div>
+            <div class="bar-row" style="margin-bottom:0;">
+              <div class="bar-row-top"><span>Nitrilo / Neopreno / Silicón — Transmisión y Empaque</span><span class="mono" style="color:var(--warning);">2.65%</span></div>
+              <div class="bar-track"><div class="bar-fill" style="width: 88%; background: var(--warning);"></div></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bitácora Auditable de Movimientos Recientes (Entidad MOVIMIENTO_INVENTARIO - Sección 5.4.2) -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h3>Bitácora Inmutable de Movimientos de Inventario (Entidad MOVIMIENTO_INVENTARIO)</h3>
+            <span class="subtitle">Trazabilidad completa desde Recepción (BIND) → Almacenamiento ABC → Corte Padre-Hijo → Despacho</span>
+          </div>
+          <div style="display:flex; gap:8px;">
+            <a href="corte.html" class="btn btn-primary btn-sm">✂️ Registrar Nuevo Corte</a>
+            <a href="recepcion.html" class="btn btn-outline btn-sm">🏷️ Ingresar Rollo Madre</a>
+          </div>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>ID Movimiento</th>
+                <th>Fecha y Hora</th>
+                <th>Tipo de Transacción</th>
+                <th>Código Padre / Hijo (Code 128)</th>
+                <th>Impacto Dimensional</th>
+                <th>Responsable</th>
+                <th>Doc. Soporte</th>
+                <th>Oportunidad Captura</th>
+              </tr>
+            </thead>
+            <tbody id="movimientosTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    function renderDashboard() {
+      const state = getAppState();
+      const m = calculateMetrics(state);
+
+      document.getElementById('liveCountBadge').textContent =
+        `${m.totalRollosMadre} Rollos Madre (ABC) + ${m.totalRetazosHijos} Retazos Hijos Activos`;
+      document.getElementById('tblEriActual').textContent = `${m.eri}%`;
+
+      const kpis = [
+        {
+          label: '1. Exactitud Registro (ERI)',
+          value: `${m.eri}%`,
+          meta: 'Meta: > 95.0%',
+          base: 'Base Cap. IV: < 82%',
+          status: m.eri >= 95 ? 'green' : (m.eri >= 90 ? 'yellow' : 'red'),
+          badge: m.eri >= 95 ? 'En Meta' : 'Atención PCC-2'
+        },
+        {
+          label: '2. Entregas a Tiempo (OTIF)',
+          value: `${m.otif}%`,
+          meta: 'Meta: > 92.0%',
+          base: 'Tardías: 5.8%',
+          status: m.otif >= 92 ? 'green' : 'yellow',
+          badge: 'Óptimo'
+        },
+        {
+          label: '3. Merma Operativa Corte',
+          value: `${m.pctMerma}%`,
+          meta: 'Meta: < 3.00%',
+          base: 'Control PCC-3',
+          status: m.pctMerma < 3.0 ? 'green' : 'red',
+          badge: 'Bajo Límite'
+        },
+        {
+          label: '4. Reutilización de Retazos',
+          value: `${m.tasaRetazos}%`,
+          meta: 'Meta: > 70.0%',
+          base: `${m.totalRetazosHijos} retazos útiles`,
+          status: 'green',
+          badge: 'Genealogía Hijo'
+        },
+        {
+          label: '5. Oportunidad de Captura',
+          value: `${m.oportunidadMin} min`,
+          meta: 'Meta: < 15 min',
+          base: 'Antes: Fin de turno',
+          status: m.oportunidadMin < 15 ? 'green' : 'red',
+          badge: 'Tiempo Real'
+        },
+        {
+          label: '6. Cumplimiento Conteos ABC',
+          value: `${m.cumplimientoAbc}%`,
+          meta: 'Meta: 100% Prog.',
+          base: `${m.discrepanciasAbiertas} por conciliar`,
+          status: m.discrepanciasAbiertas === 0 ? 'green' : 'yellow',
+          badge: m.discrepanciasAbiertas === 0 ? '100% Conciliado' : `${m.discrepanciasAbiertas} Pendiente`
+        }
+      ];
+
+      document.getElementById('kpiGrid').innerHTML = kpis.map(k => `
+        <div class="kpi-card status-${k.status}">
+          <div class="kpi-top">
+            <span class="kpi-label">${k.label}</span>
+            <span class="badge badge-${k.status === 'green' ? 'success' : (k.status === 'yellow' ? 'warning' : 'danger')}">${k.badge}</span>
+          </div>
+          <div class="kpi-value">${k.value}</div>
+          <div class="kpi-meta">
+            <span><strong>${k.meta}</strong></span>
+            <span>${k.base}</span>
+          </div>
+        </div>
+      `).join('');
+
+      // Resumen ABC
+      const clases = ['A', 'B', 'C'];
+      const freqMap = { A: 'Quincenal (24/año)', B: 'Mensual (12/año)', C: 'Trimestral (4/año)' };
+      const valMap = { A: '80% Valor Consumo', B: '15% Valor Consumo', C: '5% Valor Consumo' };
+      document.getElementById('abcSummaryCards').innerHTML = clases.map(c => {
+        const items = state.rollos.filter(r => r.abc === c && r.tipo === 'PADRE');
+        const metros = items.reduce((acc, r) => acc + Number(r.largoActual), 0).toFixed(1);
+        return `
+          <div style="background:#f8fafc; border:1px solid var(--border); border-radius:8px; padding:12px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+              <span class="badge badge-abc-${c}">Clase ${c} (${items.length} Rollos Madre)</span>
+              <span style="font-size:11px; color:var(--text-muted); font-weight:600;">${valMap[c]}</span>
+            </div>
+            <div style="font-size:18px; font-weight:800;">${metros} m lineales</div>
+            <div style="font-size:11.5px; color:var(--text-muted); margin-top:2px;">Auditoría: ${freqMap[c]}</div>
+          </div>
+        `;
+      }).join('');
+
+      // Tabla de movimientos
+      document.getElementById('movimientosTableBody').innerHTML = state.movimientos.slice().reverse().map(mv => `
+        <tr>
+          <td class="mono">${mv.idMov}</td>
+          <td>${mv.fecha}</td>
+          <td><span class="badge badge-info">${mv.tipo}</span></td>
+          <td class="mono">${mv.objeto}</td>
+          <td><strong>${mv.cantidad}</strong></td>
+          <td>${mv.usuario}</td>
+          <td class="mono">${mv.doc}</td>
+          <td><span class="badge badge-success">${mv.tiempoCapturaMin} min</span></td>
+        </tr>
+      `).join('');
+    }
+
+    renderDashboard();
+  </script>
+</body>
+</html>

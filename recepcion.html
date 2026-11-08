@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Módulo 1: Recepción y Etiquetado | Probandas México</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="brand-badge">PROBANDAS MÉXICO</span>
+      <h1>SICT-Banda Plana</h1>
+      <p>Sucursal Nueva Industrial Vallejo</p>
+    </div>
+    <ul class="nav-links">
+      <li class="nav-section-label">Inteligencia de Negocios</li>
+      <li>
+        <a href="index.html">
+          <span>📊 Tablero Ejecutivo KPIs</span>
+          <span class="nav-pcc">RF-06</span>
+        </a>
+      </li>
+      <li class="nav-section-label">Módulos Operativos (POE-INV-01)</li>
+      <li>
+        <a href="recepcion.html" class="active">
+          <span>🏷️ 1. Recepción y Etiquetado</span>
+          <span class="nav-pcc">PCC-1</span>
+        </a>
+      </li>
+      <li>
+        <a href="corte.html">
+          <span>✂️ 2. Corte en Piso y Retazos</span>
+          <span class="nav-pcc">PCC-3</span>
+        </a>
+      </li>
+      <li>
+        <a href="consulta.html">
+          <span>🔍 3. Consulta y Trazabilidad</span>
+          <span class="nav-pcc">PCC-4</span>
+        </a>
+      </li>
+      <li>
+        <a href="conteos.html">
+          <span>📋 4. Conteos Cíclicos ABC</span>
+          <span class="nav-pcc">PCC-2</span>
+        </a>
+      </li>
+    </ul>
+    <div class="sidebar-footer">
+      <div class="erp-sync-box">
+        <div class="erp-sync-status">
+          <span class="dot-online"></span> Conector ERP BIND Activo
+        </div>
+        <div style="margin-top:4px; font-size:11px; color:#94a3b8;">
+          Cotejo Factura/Remisión PCC-1
+        </div>
+      </div>
+      <div>Responsable: Coordinador Almacén</div>
+    </div>
+  </aside>
+
+  <div class="main-wrapper">
+    <header class="topbar">
+      <div class="topbar-title">
+        <h2>Módulo 1: Recepción de Rollos Madre y Etiquetado Óptico (PCC-1)</h2>
+        <p>POE-INV-01 Fase 1: Cotejo con ERP BIND, validación dimensional (m × mm) y emisión de Etiqueta Padre Code 128</p>
+      </div>
+      <div class="topbar-actions">
+        <span class="badge badge-info">Simbología: GS1 / Code 128 (RM-AAAA-LLLLL)</span>
+      </div>
+    </header>
+
+    <main class="content">
+      <div id="alertContainer"></div>
+
+      <div class="grid-2">
+        <!-- Formulario de Captura de Ingreso (Entidades MATERIAL y ROLLO_MADRE) -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3>Alta Dimensional de Rollo Madre e Integración con Factura BIND</h3>
+              <span class="subtitle">Cierra la brecha del PCC-1 vinculando el alta contable de BIND con la unidad física en piso</span>
+            </div>
+            <span class="badge badge-success">RF-01 y RF-02</span>
+          </div>
+
+          <form id="recepcionForm" onsubmit="handleRegistrarRollo(event)">
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Código de Barras Padre (Auto-generado Code 128)</label>
+                <input type="text" id="inpIdPadre" class="mono" readonly style="background:#f1f5f9; font-weight:800; color:var(--primary-dark);" />
+              </div>
+
+              <div class="form-group">
+                <label>Folio Factura / Orden Compra ERP BIND *</label>
+                <input type="text" id="inpFacturaBind" value="FAC-BIND-9215" required oninput="updateLabelPreview()" />
+              </div>
+
+              <div class="form-group">
+                <label>Catálogo Maestro de Material (Código Ref.) *</label>
+                <select id="inpMaterialRef" onchange="handleMaterialPreset()" required>
+                  <option value="BP-PU-FDA-1200|Banda Plana PU Grado Alimenticio Blanca|Transporte|Poliuretano (PU)|1200|2.4|A">BP-PU-FDA-1200 — PU Alimenticio Blanca (Clase A)</option>
+                  <option value="BP-PVC-LOG-1500|Banda Plana PVC Verde Alto Agarre Logística|Transporte|PVC|1500|3.0|A">BP-PVC-LOG-1500 — PVC Verde Logística (Clase A)</option>
+                  <option value="BP-NIT-TX-1000|Banda Plana Transmisión Nitrilo Alta Tracción|Transmisión|Nitrilo|1000|4.0|A">BP-NIT-TX-1000 — Nitrilo Transmisión (Clase A)</option>
+                  <option value="BP-NEO-IND-1000|Banda Plana Neopreno Uso Rudo|Transmisión|Neopreno|1000|3.5|B">BP-NEO-IND-1000 — Neopreno Uso Rudo (Clase B)</option>
+                  <option value="BP-SIL-HT-900|Banda Plana Silicón Térmico Empaque|Transporte|Silicón|900|2.0|A">BP-SIL-HT-900 — Silicón Térmico (Clase A)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label>Lote del Fabricante / Proveedor *</label>
+                <input type="text" id="inpLote" value="FORBO-2611-N1" required oninput="updateLabelPreview()" />
+              </div>
+
+              <div class="form-group">
+                <label>Longitud Lineal Verificada (metros m) *</label>
+                <input type="number" step="0.1" min="1" id="inpLargo" value="100.0" required oninput="updateLabelPreview()" />
+              </div>
+
+              <div class="form-group">
+                <label>Ancho Útil Verificado (milímetros mm) *</label>
+                <input type="number" step="10" min="50" id="inpAncho" value="1200" required oninput="updateLabelPreview()" />
+              </div>
+
+              <div class="form-group">
+                <label>Espesor Nominal (mm)</label>
+                <input type="number" step="0.1" id="inpEspesor" value="2.4" required oninput="updateLabelPreview()" />
+              </div>
+
+              <div class="form-group">
+                <label>Estratificación Conteo Cíclico ABC *</label>
+                <select id="inpAbc" onchange="updateLabelPreview()">
+                  <option value="A">Clase A — Alta Rotación (Quincenal)</option>
+                  <option value="B">Clase B — Rotación Media (Mensual)</option>
+                  <option value="C">Clase C — Baja Rotación (Trimestral)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label>Ubicación Asignada en Almacén (Zonificación ABC)</label>
+                <input type="text" id="inpRack" value="Rack A-01" required oninput="updateLabelPreview()" />
+              </div>
+
+              <div class="form-group">
+                <label>Dictamen de Inspección Física Inicial</label>
+                <select id="inpEstado" onchange="updateLabelPreview()">
+                  <option value="Disponible">Disponible (Liberado por Calidad)</option>
+                  <option value="En Inspección de Calidad">En Inspección de Calidad (Bloqueado para corte)</option>
+                </select>
+              </div>
+            </div>
+
+            <div style="margin-top:18px; display:flex; gap:10px; justify-content:flex-end;">
+              <button type="button" class="btn btn-outline" onclick="window.print()">🖨️ Imprimir Etiqueta Térmica</button>
+              <button type="submit" class="btn btn-primary btn-lg">✅ Registrar Rollo Madre y Emitir Código Padre</button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Vista Previa de Etiqueta Térmica Code 128 (Sección 5.4.3 y Ajuste 5.6.3) -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3>Vista Previa de Etiqueta Térmica Industrial (Code 128)</h3>
+              <span class="subtitle">Papel térmico resistente a fricción • Tipografía dimensional de alto contraste (Ajuste 5.6.3)</span>
+            </div>
+            <span class="badge badge-neutral">Etiqueta Padre</span>
+          </div>
+
+          <div class="thermal-label" id="thermalPreview">
+            <div class="thermal-header">
+              <span>PROBANDAS MÉXICO • SUC. VALLEJO</span>
+              <span id="lblAbc">CLASE A</span>
+            </div>
+            <div style="font-size:13px; font-weight:800; color:#0f172a;" id="lblNombre">
+              Banda Plana PU Grado Alimenticio Blanca
+            </div>
+            <div style="font-size:11.5px; color:#475569; margin-top:2px;" id="lblMeta">
+              Ref: BP-PU-FDA-1200 | Polímero: Poliuretano (PU)
+            </div>
+
+            <div class="thermal-dims-large" id="lblDims">
+              100.0 m × 1200 mm (Esp: 2.4 mm)
+            </div>
+
+            <div class="barcode-bars"></div>
+            <div class="thermal-code" id="lblBarcode">RM-2026-00021</div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; text-align:left; font-size:11px; border-top:1px solid #cbd5e1; padding-top:8px; margin-top:6px; gap:4px;">
+              <div><strong>Lote Prov:</strong> <span id="lblLote">FORBO-2611-N1</span></div>
+              <div><strong>ERP BIND:</strong> <span id="lblBind">FAC-BIND-9215</span></div>
+              <div><strong>Ubicación:</strong> <span id="lblRack">Rack A-01</span></div>
+              <div><strong>Estado:</strong> <span id="lblEstado">Disponible</span></div>
+            </div>
+          </div>
+
+          <div style="margin-top:16px; background:#f8fafc; padding:12px; border-radius:8px; border:1px solid var(--border); font-size:12px; color:#475569;">
+            <strong>Regla de Control POE-INV-01 (PCC-1):</strong> Ningún rollo madre puede colocarse en estantería sin portar su etiqueta adherida con código Padre <code>RM-AAAA-LLLLL</code> y haber validado su longitud lineal (m) y ancho útil (mm) contra la factura del ERP BIND.
+          </div>
+        </div>
+      </div>
+
+      <!-- Últimos Rollos Madre Registrados -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h3>Padrón de Rollos Madre Activos en Almacén Vallejo (Entidad ROLLO_MADRE)</h3>
+            <span class="subtitle">Sincronizado con el universo de estudio (4 Clase A, 6 Clase B, 10 Clase C + Nuevos ingresos)</span>
+          </div>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Código Padre (Code 128)</th>
+                <th>ABC</th>
+                <th>Referencia y Polímero</th>
+                <th>Lote / Factura BIND</th>
+                <th>Longitud Inicial</th>
+                <th>Longitud Actual</th>
+                <th>Ancho × Espesor</th>
+                <th>Ubicación</th>
+                <th>Estado</th>
+              </tr>
+            </thead>
+            <tbody id="rollosMadreTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    function generateNextPadreId(state) {
+      const padres = state.rollos.filter(r => r.tipo === 'PADRE');
+      const nextNum = padres.length + 1;
+      return `RM-2026-${String(nextNum).padStart(5, '0')}`;
+    }
+
+    function handleMaterialPreset() {
+      const val = document.getElementById('inpMaterialRef').value;
+      const [ref, nombre, familia, polimero, ancho, espesor, abc] = val.split('|');
+      document.getElementById('inpAncho').value = ancho;
+      document.getElementById('inpEspesor').value = espesor;
+      document.getElementById('inpAbc').value = abc;
+      document.getElementById('inpRack').value = `Rack ${abc}-01`;
+      updateLabelPreview();
+    }
+
+    function updateLabelPreview() {
+      const val = document.getElementById('inpMaterialRef').value;
+      const [ref, nombre, familia, polimero] = val.split('|');
+      const idPadre = document.getElementById('inpIdPadre').value;
+      const largo = Number(document.getElementById('inpLargo').value || 0).toFixed(1);
+      const ancho = document.getElementById('inpAncho').value;
+      const espesor = document.getElementById('inpEspesor').value;
+      const abc = document.getElementById('inpAbc').value;
+
+      document.getElementById('lblAbc').textContent = `CLASE ${abc}`;
+      document.getElementById('lblNombre').textContent = nombre;
+      document.getElementById('lblMeta').textContent = `Ref: ${ref} | Polímero: ${polimero}`;
+      document.getElementById('lblDims').textContent = `${largo} m × ${ancho} mm (Esp: ${espesor} mm)`;
+      document.getElementById('lblBarcode').textContent = idPadre;
+      document.getElementById('lblLote').textContent = document.getElementById('inpLote').value;
+      document.getElementById('lblBind').textContent = document.getElementById('inpFacturaBind').value;
+      document.getElementById('lblRack').textContent = document.getElementById('inpRack').value;
+      document.getElementById('lblEstado').textContent = document.getElementById('inpEstado').value;
+    }
+
+    function handleRegistrarRollo(e) {
+      e.preventDefault();
+      const state = getAppState();
+      const val = document.getElementById('inpMaterialRef').value;
+      const [codigoRef, nombre, familia, polimero] = val.split('|');
+      const id = document.getElementById('inpIdPadre').value;
+      const largo = Number(document.getElementById('inpLargo').value);
+      const anchoMm = Number(document.getElementById('inpAncho').value);
+      const espesorMm = Number(document.getElementById('inpEspesor').value);
+      const abc = document.getElementById('inpAbc').value;
+      const rack = document.getElementById('inpRack').value;
+      const lote = document.getElementById('inpLote').value;
+      const facturaBind = document.getElementById('inpFacturaBind').value;
+      const estado = document.getElementById('inpEstado').value;
+      const ahora = formatNow();
+
+      state.rollos.unshift({
+        id,
+        tipo: 'PADRE',
+        padreId: null,
+        codigoRef,
+        nombre,
+        familia,
+        polimero,
+        lote,
+        facturaBind,
+        largoInicial: largo,
+        largoActual: largo,
+        anchoMm,
+        espesorMm,
+        abc,
+        rack,
+        estado,
+        fechaIngreso: ahora,
+        conteoFisico: largo,
+        fechaConteo: ahora.slice(0, 10),
+        conciliado: true
+      });
+
+      state.movimientos.push({
+        idMov: `MOV-${9000 + state.movimientos.length + 1}`,
+        fecha: ahora,
+        tipo: 'ALTA ROLLO MADRE (PCC-1)',
+        objeto: id,
+        cantidad: `+${largo.toFixed(1)} m × ${anchoMm} mm`,
+        usuario: 'M. Ibañez (Coord. Almacén)',
+        doc: facturaBind,
+        tiempoCapturaMin: 1
+      });
+
+      saveAppState(state);
+      playScannerSound('ok');
+
+      document.getElementById('alertContainer').innerHTML = `
+        <div class="alert alert-success">
+          <span>✅ Rollo Madre <strong>${id}</strong> (${largo.toFixed(1)} m × ${anchoMm} mm) registrado exitosamente y vinculado a la factura <strong>${facturaBind}</strong> del ERP BIND.</span>
+          <a href="corte.html" class="btn btn-success btn-sm">Ir a Módulo de Corte →</a>
+        </div>
+      `;
+
+      initRecepcion();
+    }
+
+    function initRecepcion() {
+      const state = getAppState();
+      document.getElementById('inpIdPadre').value = generateNextPadreId(state);
+      updateLabelPreview();
+
+      const padres = state.rollos.filter(r => r.tipo === 'PADRE');
+      document.getElementById('rollosMadreTable').innerHTML = padres.map(r => `
+        <tr>
+          <td class="mono" style="color:var(--primary-dark);">${r.id}</td>
+          <td><span class="badge badge-abc-${r.abc}">Clase ${r.abc}</span></td>
+          <td>
+            <strong>${r.nombre}</strong>
+            <div style="font-size:11.5px; color:var(--text-muted);">${r.codigoRef} • ${r.polimero}</div>
+          </td>
+          <td class="mono">${r.lote}<br/><span style="color:var(--text-muted); font-weight:400;">${r.facturaBind}</span></td>
+          <td class="mono">${Number(r.largoInicial).toFixed(1)} m</td>
+          <td class="mono"><strong>${Number(r.largoActual).toFixed(1)} m</strong></td>
+          <td class="mono">${r.anchoMm} mm × ${r.espesorMm} mm</td>
+          <td><strong>${r.rack}</strong></td>
+          <td>
+            <span class="badge ${r.estado === 'Disponible' ? 'badge-success' : (r.estado === 'Apartado' ? 'badge-warning' : 'badge-danger')}">
+              ${r.estado}
+            </span>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    initRecepcion();
+  </script>
+</body>
+</html>

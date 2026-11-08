@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Módulo 3: Consulta y Trazabilidad en Tiempo Real | Probandas México</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="brand-badge">PROBANDAS MÉXICO</span>
+      <h1>SICT-Banda Plana</h1>
+      <p>Sucursal Nueva Industrial Vallejo</p>
+    </div>
+    <ul class="nav-links">
+      <li class="nav-section-label">Inteligencia de Negocios</li>
+      <li>
+        <a href="index.html">
+          <span>📊 Tablero Ejecutivo KPIs</span>
+          <span class="nav-pcc">RF-06</span>
+        </a>
+      </li>
+      <li class="nav-section-label">Módulos Operativos (POE-INV-01)</li>
+      <li>
+        <a href="recepcion.html">
+          <span>🏷️ 1. Recepción y Etiquetado</span>
+          <span class="nav-pcc">PCC-1</span>
+        </a>
+      </li>
+      <li>
+        <a href="corte.html">
+          <span>✂️ 2. Corte en Piso y Retazos</span>
+          <span class="nav-pcc">PCC-3</span>
+        </a>
+      </li>
+      <li>
+        <a href="consulta.html" class="active">
+          <span>🔍 3. Consulta y Trazabilidad</span>
+          <span class="nav-pcc">PCC-4</span>
+        </a>
+      </li>
+      <li>
+        <a href="conteos.html">
+          <span>📋 4. Conteos Cíclicos ABC</span>
+          <span class="nav-pcc">PCC-2</span>
+        </a>
+      </li>
+    </ul>
+    <div class="sidebar-footer">
+      <div class="erp-sync-box">
+        <div class="erp-sync-status">
+          <span class="dot-online"></span> Consulta Unificada Activa
+        </div>
+        <div style="margin-top:4px; font-size:11px; color:#94a3b8;">
+          Ventas • Compras • Calidad • Logística
+        </div>
+      </div>
+      <div>RF-05 • Cero Recuentos Última Hora</div>
+    </div>
+  </aside>
+
+  <div class="main-wrapper">
+    <header class="topbar">
+      <div class="topbar-title">
+        <h2>Módulo 3: Consulta Interdepartamental, Apartados y Genealogía Padre-Hijo (PCC-4)</h2>
+        <p>Fuente única en tiempo real para Ventas, Compras, Producción y Calidad (Elimina llamadas y recuentos físicos de última hora)</p>
+      </div>
+      <div class="topbar-actions">
+        <span class="badge badge-success" id="resumenFiltroBadge">22 partidas activas</span>
+      </div>
+    </header>
+
+    <main class="content">
+      <div id="consultaAlert"></div>
+
+      <!-- Barra de Filtros Dimensionales (Sección 5.4.4.3) -->
+      <div class="card" style="margin-bottom:20px;">
+        <div class="card-header">
+          <div>
+            <h3>Buscador Dimensional de Disponibilidad para Cotización y Producción</h3>
+            <span class="subtitle">Filtra simultáneamente Rollos Madre y Retazos Hijos Aprovechables que cumplan la longitud continua y ancho requeridos</span>
+          </div>
+          <button class="btn btn-outline btn-sm" onclick="limpiarFiltros()">Limpiar Filtros</button>
+        </div>
+
+        <div class="grid-kpis" style="margin-bottom:0; grid-template-columns: repeat(auto-fit, minmax(165px, 1fr));">
+          <div class="form-group">
+            <label>Código / Referencia / Lote</label>
+            <input type="text" id="fltTexto" placeholder="Ej. RM-2026 o PU..." oninput="renderInventario()" />
+          </div>
+          <div class="form-group">
+            <label>Longitud Mínima Req. (m)</label>
+            <input type="number" step="0.5" min="0" id="fltMinLargo" placeholder="Ej. 10.0 m" oninput="renderInventario()" />
+          </div>
+          <div class="form-group">
+            <label>Ancho Mínimo Req. (mm)</label>
+            <input type="number" step="50" min="0" id="fltMinAncho" placeholder="Ej. 450 mm" oninput="renderInventario()" />
+          </div>
+          <div class="form-group">
+            <label>Polímero / Recubrimiento</label>
+            <select id="fltPolimero" onchange="renderInventario()">
+              <option value="">Todos los polímeros</option>
+              <option value="Poliuretano (PU)">Poliuretano (PU)</option>
+              <option value="PVC">PVC</option>
+              <option value="Nitrilo">Nitrilo</option>
+              <option value="Neopreno">Neopreno</option>
+              <option value="Silicón">Silicón</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Tipo de Unidad</label>
+            <select id="fltTipo" onchange="renderInventario()">
+              <option value="">Rollos Madre + Retazos Hijos</option>
+              <option value="PADRE">Solo Rollos Madre (RM)</option>
+              <option value="HIJO">Solo Retazos Útiles Hijos (RT)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Clasificación ABC</label>
+            <select id="fltAbc" onchange="renderInventario()">
+              <option value="">Todas (A, B y C)</option>
+              <option value="A">Clase A (Alta Rotación)</option>
+              <option value="B">Clase B (Media Rotación)</option>
+              <option value="C">Clase C (Baja Rotación)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Tabla de Existencias en Tiempo Real -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <h3>Existencias Físicas Verificadas y Ubicación en Estantería (Tiempo Real)</h3>
+            <span class="subtitle">Prioriza el aprovechamiento de Retazos Útiles Hijos (RT) antes de abrir un Rollo Madre nuevo</span>
+          </div>
+        </div>
+        <div class="table-container">
+          <table>
+            <thead>
+              <tr>
+                <th>Código Code 128</th>
+                <th>Tipo / Origen</th>
+                <th>ABC</th>
+                <th>Descripción y Polímero</th>
+                <th>Longitud Disponible</th>
+                <th>Ancho × Espesor</th>
+                <th>Rack</th>
+                <th>Estado Actual</th>
+                <th>Acciones Operativas</th>
+              </tr>
+            </thead>
+            <tbody id="tablaConsultaBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal de Árbol de Genealogía Padre-Hijo y Trazabilidad Completa -->
+  <div class="modal-backdrop" id="modalGenealogia">
+    <div class="modal-card">
+      <div class="card-header">
+        <div>
+          <h3 id="mdlTitulo">Trazabilidad Completa y Genealogía Padre-Hijo</h3>
+          <span class="subtitle">Rastreo desde Factura ERP BIND → Rollo Madre → Cortes en Taller → Retazos Hijos</span>
+        </div>
+        <button class="btn btn-outline btn-sm" onclick="cerrarModal()">✕ Cerrar</button>
+      </div>
+      <div id="mdlContenido"></div>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    function limpiarFiltros() {
+      document.getElementById('fltTexto').value = '';
+      document.getElementById('fltMinLargo').value = '';
+      document.getElementById('fltMinAncho').value = '';
+      document.getElementById('fltPolimero').value = '';
+      document.getElementById('fltTipo').value = '';
+      document.getElementById('fltAbc').value = '';
+      renderInventario();
+    }
+
+    function renderInventario() {
+      const state = getAppState();
+      const q = document.getElementById('fltTexto').value.trim().toLowerCase();
+      const minL = Number(document.getElementById('fltMinLargo').value || 0);
+      const minA = Number(document.getElementById('fltMinAncho').value || 0);
+      const pol = document.getElementById('fltPolimero').value;
+      const tipo = document.getElementById('fltTipo').value;
+      const abc = document.getElementById('fltAbc').value;
+
+      const filtrados = state.rollos.filter(r => {
+        if (q && !(r.id.toLowerCase().includes(q) || r.nombre.toLowerCase().includes(q) || r.codigoRef.toLowerCase().includes(q) || r.lote.toLowerCase().includes(q))) return false;
+        if (minL > 0 && Number(r.largoActual) < minL) return false;
+        if (minA > 0 && Number(r.anchoMm) < minA) return false;
+        if (pol && r.polimero !== pol) return false;
+        if (tipo && r.tipo !== tipo) return false;
+        if (abc && r.abc !== abc) return false;
+        return true;
+      });
+
+      document.getElementById('resumenFiltroBadge').textContent =
+        `Mostrando ${filtrados.length} de ${state.rollos.length} unidades`;
+
+      document.getElementById('tablaConsultaBody').innerHTML = filtrados.map(r => `
+        <tr>
+          <td class="mono" style="color:var(--primary-dark);">${r.id}</td>
+          <td>
+            ${r.tipo === 'HIJO'
+              ? `<span class="badge badge-info">RETAZO HIJO</span><div style="font-size:11px; color:var(--text-muted);">Padre: ${r.padreId}</div>`
+              : `<span class="badge badge-neutral">ROLLO MADRE</span><div style="font-size:11px; color:var(--text-muted);">${r.facturaBind}</div>`
+            }
+          </td>
+          <td><span class="badge badge-abc-${r.abc}">${r.abc}</span></td>
+          <td>
+            <strong>${r.nombre}</strong>
+            <div style="font-size:11.5px; color:var(--text-muted);">${r.codigoRef} • ${r.polimero} • Lote: ${r.lote}</div>
+          </td>
+          <td class="mono" style="font-size:14px;">
+            <strong>${Number(r.largoActual).toFixed(2)} m</strong>
+            <div style="font-size:11px; color:var(--text-muted);">Inicial: ${Number(r.largoInicial).toFixed(1)} m</div>
+          </td>
+          <td class="mono"><strong>${r.anchoMm} mm</strong> × ${r.espesorMm} mm</td>
+          <td><strong>${r.rack}</strong></td>
+          <td>
+            <span class="badge ${r.estado === 'Disponible' ? 'badge-success' : (r.estado === 'Apartado' ? 'badge-warning' : 'badge-danger')}">
+              ${r.estado}
+            </span>
+          </td>
+          <td>
+            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+              <button class="btn btn-outline btn-sm" onclick="verGenealogia('${r.id}')">🧬 Trazabilidad</button>
+              <button class="btn btn-primary btn-sm" onclick="cambiarEstado('${r.id}')">
+                ${r.estado === 'Disponible' ? '📌 Apartar Pedido' : '✅ Liberar a Disponible'}
+              </button>
+            </div>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    function cambiarEstado(id) {
+      const state = getAppState();
+      const idx = state.rollos.findIndex(r => r.id === id);
+      if (idx === -1) return;
+
+      const actual = state.rollos[idx].estado;
+      const nuevo = actual === 'Disponible' ? 'Apartado' : 'Disponible';
+      state.rollos[idx].estado = nuevo;
+
+      state.movimientos.push({
+        idMov: `MOV-${9000 + state.movimientos.length + 1}`,
+        fecha: formatNow(),
+        tipo: nuevo === 'Apartado' ? 'APARTADO COMERCIAL (PCC-4)' : 'LIBERACIÓN / DISPONIBLE',
+        objeto: id,
+        cantidad: `${Number(state.rollos[idx].largoActual).toFixed(2)} m × ${state.rollos[idx].anchoMm} mm`,
+        usuario: 'Gerencia Ventas / Calidad',
+        doc: 'COT-VENTAS-2026',
+        tiempoCapturaMin: 1
+      });
+
+      saveAppState(state);
+      playScannerSound('ok');
+
+      document.getElementById('consultaAlert').innerHTML = `
+        <div class="alert alert-success">
+          <span>✅ Unidad <code>${id}</code> actualizada a estado <strong>${nuevo}</strong> en tiempo real para todas las áreas (Ventas, Almacén, Corte y Compras).</span>
+        </div>
+      `;
+      renderInventario();
+    }
+
+    function verGenealogia(id) {
+      const state = getAppState();
+      const item = state.rollos.find(r => r.id === id);
+      if (!item) return;
+
+      const padreId = item.tipo === 'HIJO' ? item.padreId : item.id;
+      const padre = state.rollos.find(r => r.id === padreId) || item;
+      const hijos = state.rollos.filter(r => r.padreId === padreId);
+      const cortes = state.ordenesCorte.filter(c => c.idRolloOrigen === padreId);
+
+      document.getElementById('mdlTitulo').textContent = `Árbol de Genealogía Padre-Hijo: ${padre.id}`;
+      document.getElementById('mdlContenido').innerHTML = `
+        <div style="background:#f8fafc; padding:14px; border-radius:8px; border:1px solid var(--border); margin-bottom:14px;">
+          <div style="font-size:12px; color:var(--text-muted); font-weight:700;">1. ALTA ADMINISTRATIVA Y RECEPCIÓN FÍSICA (PCC-1)</div>
+          <div style="margin-top:4px; font-size:13.5px;">
+            <strong>Factura ERP BIND:</strong> <span class="mono">${padre.facturaBind}</span> |
+            <strong>Lote Proveedor:</strong> <span class="mono">${padre.lote}</span> |
+            <strong>Fecha Ingreso:</strong> ${padre.fechaIngreso}
+          </div>
+        </div>
+
+        <div class="tree-node">
+          <div style="font-weight:800; color:var(--primary-dark); font-size:14.5px;">
+            🏷️ ROLLO MADRE PADRE: <span class="mono">${padre.id}</span> (${padre.nombre})
+          </div>
+          <div style="font-size:12.5px; color:#334155; margin-top:4px;">
+            Longitud Original: <strong>${Number(padre.largoInicial).toFixed(2)} m</strong> × ${padre.anchoMm} mm |
+            Longitud Remanente Actual: <strong>${Number(padre.largoActual).toFixed(2)} m</strong> |
+            Ubicación: <strong>${padre.rack}</strong>
+          </div>
+
+          ${cortes.length > 0 ? cortes.map(c => `
+            <div class="tree-child">
+              <div style="font-weight:700; font-size:13px;">
+                ✂️ Orden de Corte <span class="mono">${c.idOrden}</span> (${c.fechaHora}) — Pedido: ${c.folioPedido}
+              </div>
+              <div style="font-size:12px; color:#475569; margin-top:2px;">
+                Balance Dimensional: Inicial <strong>${Number(c.largoInicialM).toFixed(2)}m</strong> =
+                Tramo Cliente (<strong>${Number(c.largoClienteM).toFixed(2)}m × ${c.anchoCorteMm}mm</strong>) +
+                Remanente (<strong>${Number(c.largoRetazoM).toFixed(2)}m</strong>) +
+                Merma Técnica (<strong>${Number(c.largoMermaM).toFixed(2)}m</strong>)
+              </div>
+            </div>
+          `).join('') : `<div class="tree-child" style="font-size:12.5px; color:var(--text-muted);">Sin fraccionamientos registrados aún (Rollo íntegro).</div>`}
+
+          ${hijos.length > 0 ? hijos.map(h => `
+            <div class="tree-child" style="border-left-color:var(--success); background:#f0fdf4; padding:8px 12px; border-radius:6px;">
+              <div style="font-weight:800; color:#065f46; font-size:13px;">
+                ♻️ RETAZO ÚTIL HIJO DERIVADO: <span class="mono">${h.id}</span>
+              </div>
+              <div style="font-size:12px; color:#065f46;">
+                Dimensiones Disponibles: <strong>${Number(h.largoActual).toFixed(2)} m × ${h.anchoMm} mm</strong> |
+                Ubicación: <strong>${h.rack}</strong> | Estado: <strong>${h.estado}</strong>
+              </div>
+            </div>
+          `).join('') : ''}
+        </div>
+      `;
+
+      document.getElementById('modalGenealogia').classList.add('open');
+    }
+
+    function cerrarModal() {
+      document.getElementById('modalGenealogia').classList.remove('open');
+    }
+
+    renderInventario();
+  </script>
+</body>
+</html>

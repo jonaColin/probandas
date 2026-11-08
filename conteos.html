@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Módulo 4: Conteos Cíclicos ABC y Conciliación | Probandas México</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="brand-badge">PROBANDAS MÉXICO</span>
+      <h1>SICT-Banda Plana</h1>
+      <p>Sucursal Nueva Industrial Vallejo</p>
+    </div>
+    <ul class="nav-links">
+      <li class="nav-section-label">Inteligencia de Negocios</li>
+      <li>
+        <a href="index.html">
+          <span>📊 Tablero Ejecutivo KPIs</span>
+          <span class="nav-pcc">RF-06</span>
+        </a>
+      </li>
+      <li class="nav-section-label">Módulos Operativos (POE-INV-01)</li>
+      <li>
+        <a href="recepcion.html">
+          <span>🏷️ 1. Recepción y Etiquetado</span>
+          <span class="nav-pcc">PCC-1</span>
+        </a>
+      </li>
+      <li>
+        <a href="corte.html">
+          <span>✂️ 2. Corte en Piso y Retazos</span>
+          <span class="nav-pcc">PCC-3</span>
+        </a>
+      </li>
+      <li>
+        <a href="consulta.html">
+          <span>🔍 3. Consulta y Trazabilidad</span>
+          <span class="nav-pcc">PCC-4</span>
+        </a>
+      </li>
+      <li>
+        <a href="conteos.html" class="active">
+          <span>📋 4. Conteos Cíclicos ABC</span>
+          <span class="nav-pcc">PCC-2</span>
+        </a>
+      </li>
+    </ul>
+    <div class="sidebar-footer">
+      <div class="erp-sync-box">
+        <div class="erp-sync-status">
+          <span class="dot-online"></span> Programa Preventivo ABC
+        </div>
+        <div style="margin-top:4px; font-size:11px; color:#94a3b8;">
+          4 Clase A • 6 Clase B • 10 Clase C
+        </div>
+      </div>
+      <div>Coord. Almacén + Auditor Interno</div>
+    </div>
+  </aside>
+
+  <div class="main-wrapper">
+    <header class="topbar">
+      <div class="topbar-title">
+        <h2>Módulo 4: Programa de Conteos Cíclicos ABC y Protocolo de Conciliación (PCC-2)</h2>
+        <p>Estratificación de los N = 20 Rollos Madre (Sección 5.3) y análisis de causa raíz para ajuste autorizado</p>
+      </div>
+      <div class="topbar-actions">
+        <span class="badge badge-info" id="eriLiveBadge">ERI Actual: 95.5%</span>
+      </div>
+    </header>
+
+    <main class="content">
+      <div id="conciliacionAlert"></div>
+
+      <!-- Tarjetas de Estratificación ABC (Sección 5.3.1 y 5.3.2) -->
+      <div class="grid-3">
+        <div class="card" style="border-top: 4px solid #ef4444;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span class="badge badge-abc-A">CLASE A • ALTA ROTACIÓN</span>
+            <span class="mono" style="font-size:12px; color:var(--text-muted);">80% Valor Consumo</span>
+          </div>
+          <div style="font-size:21px; font-weight:800; margin:8px 0 4px;">4 Rollos Madre (20%)</div>
+          <div style="font-size:12.5px; color:var(--text-muted);">
+            <strong>Frecuencia Obligatoria:</strong> Quincenal (24 revisiones al año) • Censo físico del 100%
+          </div>
+        </div>
+
+        <div class="card" style="border-top: 4px solid #f59e0b;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span class="badge badge-abc-B">CLASE B • MEDIA ROTACIÓN</span>
+            <span class="mono" style="font-size:12px; color:var(--text-muted);">15% Valor Consumo</span>
+          </div>
+          <div style="font-size:21px; font-weight:800; margin:8px 0 4px;">6 Rollos Madre (30%)</div>
+          <div style="font-size:12.5px; color:var(--text-muted);">
+            <strong>Frecuencia Obligatoria:</strong> Mensual (12 revisiones al año) • Verificación dimensional (m × mm)
+          </div>
+        </div>
+
+        <div class="card" style="border-top: 4px solid #0284c7;">
+          <div style="display:flex; justify-content:space-between; align-items:center;">
+            <span class="badge badge-abc-C">CLASE C • BAJA ROTACIÓN</span>
+            <span class="mono" style="font-size:12px; color:var(--text-muted);">5% Valor Consumo</span>
+          </div>
+          <div style="font-size:21px; font-weight:800; margin:8px 0 4px;">10 Rollos Madre (50%)</div>
+          <div style="font-size:12.5px; color:var(--text-muted);">
+            <strong>Frecuencia Obligatoria:</strong> Trimestral (4 revisiones al año) • Auditoría de resguardo
+          </div>
+        </div>
+      </div>
+
+      <div class="grid-2">
+        <!-- Hoja Digital de Verificación Cíclica ABC -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3>Lista Digital de Verificación Física ABC (N = 20 Rollos Madre)</h3>
+              <span class="subtitle">Ingrese la longitud física medida en estantería para validar el ERI o activar el Protocolo de Conciliación</span>
+            </div>
+            <select id="filtroClaseAbc" onchange="renderTablaConteos()" style="padding:5px 10px; font-size:12.5px;">
+              <option value="">Todas las Clases (A, B, C)</option>
+              <option value="A">Solo Clase A (Quincenal)</option>
+              <option value="B">Solo Clase B (Mensual)</option>
+              <option value="C">Solo Clase C (Trimestral)</option>
+            </select>
+          </div>
+
+          <div class="table-container">
+            <table>
+              <thead>
+                <tr>
+                  <th>Código Padre</th>
+                  <th>ABC</th>
+                  <th>Rollo y Rack</th>
+                  <th>Saldo Sistema</th>
+                  <th>Conteo Físico (m)</th>
+                  <th>Diferencia</th>
+                  <th>Estado ERI</th>
+                  <th>Acción</th>
+                </tr>
+              </thead>
+              <tbody id="tablaConteosBody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Formulario del Protocolo de Conciliación de 5 Pasos (Sección 5.3.3) -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3>Protocolo de Conciliación y Causa Raíz (Sección 5.3.3)</h3>
+              <span class="subtitle">Prohibida la sobrescritura sin análisis de causa raíz y autorización de Gerencia</span>
+            </div>
+            <span class="badge badge-warning">RF-04</span>
+          </div>
+
+          <form id="formConciliacion" onsubmit="aprobarConciliacion(event)">
+            <div class="form-grid">
+              <div class="form-group full">
+                <label>Partida con Discrepancia Seleccionada para Conciliar *</label>
+                <input type="text" id="concRolloId" class="mono" value="RM-2026-00003" readonly style="background:#f1f5f9; font-weight:800;" />
+              </div>
+
+              <div class="form-group">
+                <label>Saldo Registrado en Sistema (m)</label>
+                <input type="number" step="0.1" id="concSaldoSist" value="41.2" readonly style="background:#f1f5f9;" />
+              </div>
+
+              <div class="form-group">
+                <label>Reconteo Físico Verificado (m) *</label>
+                <input type="number" step="0.1" id="concConteoFis" value="39.8" required />
+              </div>
+
+              <div class="form-group full">
+                <label>Paso 1 y 2: Verificación Previa Obligatoria</label>
+                <div style="background:#f8fafc; padding:10px; border-radius:6px; border:1px solid var(--border); font-size:12.5px; display:flex; flex-direction:column; gap:6px;">
+                  <label style="font-weight:500; display:flex; align-items:center; gap:8px;">
+                    <input type="checkbox" checked required /> 1. Se verificó que no existan órdenes de corte en proceso o pendientes de captura.
+                  </label>
+                  <label style="font-weight:500; display:flex; align-items:center; gap:8px;">
+                    <input type="checkbox" checked required /> 2. Se ejecutó reconteo físico independiente con flexómetro/odómetro calibrado.
+                  </label>
+                </div>
+              </div>
+
+              <div class="form-group full">
+                <label>Paso 3: Categoría Estandarizada de Causa Raíz (Sección 5.3.3) *</label>
+                <select id="concCausaRaiz" required>
+                  <option value="Merma no reportada">Merma no reportada (Recorte técnico de ajuste omitido)</option>
+                  <option value="Error de medición">Error de medición (Variación longitudinal al seccionar tramo)</option>
+                  <option value="Corte mal registrado">Corte mal registrado (Diferencia entre orden y captura)</option>
+                  <option value="Confusión de código">Confusión de código (Retazo u homólogo intercambiado)</option>
+                </select>
+              </div>
+
+              <div class="form-group full">
+                <label>Paso 4: Justificación Técnica y Acción Correctiva *</label>
+                <textarea id="concJustificacion" rows="2" required>Durante el corte de banda Nitrilo RM-2026-00003 se descartaron 1.40 m de extremo dañado por almacenamiento previo sin reportar la merma técnica.</textarea>
+              </div>
+
+              <div class="form-group full">
+                <label>Paso 5: Autorización para Ajuste Auditado</label>
+                <input type="text" id="concAutoriza" value="Autorizado: Gerencia de Sucursal Vallejo + Coordinador Almacén" required />
+              </div>
+            </div>
+
+            <div style="margin-top:14px;">
+              <button type="submit" class="btn btn-primary btn-lg" style="width:100%;">
+                ✅ Aprobar Conciliación, Ajustar Saldo Auditado y Actualizar ERI
+              </button>
+            </div>
+          </form>
+
+          <div style="margin-top:18px; border-top:1px solid var(--border); padding-top:14px;">
+            <h4 style="font-size:13.5px; margin-bottom:8px;">Historial de Conciliaciones Autorizadas</h4>
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Folio / Fecha</th>
+                    <th>Rollo</th>
+                    <th>Ajuste (m)</th>
+                    <th>Causa Raíz</th>
+                    <th>Estado</th>
+                  </tr>
+                </thead>
+                <tbody id="tablaHistorialConc"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    function renderTablaConteos() {
+      const state = getAppState();
+      const m = calculateMetrics(state);
+      document.getElementById('eriLiveBadge').textContent = `ERI Actual: ${m.eri}% (Meta > 95%)`;
+
+      const filtro = document.getElementById('filtroClaseAbc').value;
+      const rollos = state.rollos.filter(r => r.tipo === 'PADRE' && (!filtro || r.abc === filtro));
+
+      document.getElementById('tablaConteosBody').innerHTML = rollos.map(r => {
+        const sist = Number(r.largoActual);
+        const fis = Number(r.conteoFisico ?? r.largoActual);
+        const dif = Number((fis - sist).toFixed(2));
+        const coincide = Math.abs(dif) < 0.05;
+
+        return `
+          <tr style="${!coincide ? 'background:#fef2f2;' : ''}">
+            <td class="mono" style="color:var(--primary-dark);">${r.id}</td>
+            <td><span class="badge badge-abc-${r.abc}">${r.abc}</span></td>
+            <td>
+              <strong>${r.codigoRef}</strong>
+              <div style="font-size:11px; color:var(--text-muted);">${r.rack} • ${r.polimero}</div>
+            </td>
+            <td class="mono"><strong>${sist.toFixed(2)} m</strong></td>
+            <td>
+              <input
+                type="number"
+                step="0.1"
+                value="${fis.toFixed(1)}"
+                style="width:86px; padding:5px 8px; font-weight:700;"
+                onchange="actualizarConteoFisico('${r.id}', this.value)"
+              />
+            </td>
+            <td class="mono" style="color:${coincide ? 'var(--success)' : 'var(--danger)'};">
+              ${dif > 0 ? `+${dif.toFixed(2)}` : dif.toFixed(2)} m
+            </td>
+            <td>
+              ${coincide
+                ? `<span class="badge badge-success">Exacto (ERI ✓)</span>`
+                : `<span class="badge badge-danger">Discrepancia</span>`
+              }
+            </td>
+            <td>
+              ${!coincide
+                ? `<button class="btn btn-danger btn-sm" onclick="cargarEnProtocolo('${r.id}')">Conciliar →</button>`
+                : `<button class="btn btn-outline btn-sm" onclick="cargarEnProtocolo('${r.id}')">Auditar</button>`
+              }
+            </td>
+          </tr>
+        `;
+      }).join('');
+
+      document.getElementById('tablaHistorialConc').innerHTML = state.conciliaciones.map(c => `
+        <tr>
+          <td class="mono">${c.idConciliacion}<div style="font-size:11px; color:var(--text-muted);">${c.fecha}</div></td>
+          <td class="mono">${c.idRollo} (${c.abc})</td>
+          <td class="mono" style="color:var(--danger);">${c.diferencia > 0 ? `+${c.diferencia}` : c.diferencia} m</td>
+          <td><span class="badge badge-warning">${c.causaRaiz}</span></td>
+          <td><span class="badge badge-success">${c.estado}</span></td>
+        </tr>
+      `).join('');
+    }
+
+    function actualizarConteoFisico(id, nuevoValor) {
+      const state = getAppState();
+      const idx = state.rollos.findIndex(r => r.id === id);
+      if (idx === -1) return;
+
+      const fis = Number(nuevoValor);
+      const sist = Number(state.rollos[idx].largoActual);
+      state.rollos[idx].conteoFisico = fis;
+      state.rollos[idx].conciliado = Math.abs(fis - sist) < 0.05;
+
+      saveAppState(state);
+      cargarEnProtocolo(id);
+      renderTablaConteos();
+    }
+
+    function cargarEnProtocolo(id) {
+      const state = getAppState();
+      const r = state.rollos.find(x => x.id === id);
+      if (!r) return;
+      document.getElementById('concRolloId').value = r.id;
+      document.getElementById('concSaldoSist').value = Number(r.largoActual).toFixed(1);
+      document.getElementById('concConteoFis').value = Number(r.conteoFisico ?? r.largoActual).toFixed(1);
+    }
+
+    function aprobarConciliacion(e) {
+      e.preventDefault();
+      const state = getAppState();
+      const id = document.getElementById('concRolloId').value;
+      const idx = state.rollos.findIndex(r => r.id === id);
+      if (idx === -1) return;
+
+      const saldoSist = Number(document.getElementById('concSaldoSist').value);
+      const conteoFis = Number(document.getElementById('concConteoFis').value);
+      const dif = Number((conteoFis - saldoSist).toFixed(2));
+      const causa = document.getElementById('concCausaRaiz').value;
+      const justif = document.getElementById('concJustificacion').value;
+      const ahora = formatNow();
+
+      state.rollos[idx].largoActual = conteoFis;
+      state.rollos[idx].conteoFisico = conteoFis;
+      state.rollos[idx].conciliado = true;
+      state.rollos[idx].fechaConteo = ahora.slice(0, 10);
+
+      const folioConc = `CONC-2026-0${20 + state.conciliaciones.length}`;
+      state.conciliaciones.unshift({
+        idConciliacion: folioConc,
+        fecha: ahora.slice(0, 10),
+        idRollo: id,
+        abc: state.rollos[idx].abc,
+        saldoSistema: saldoSist,
+        conteoFisico: conteoFis,
+        diferencia: dif,
+        causaRaiz: causa,
+        justificacion: justif,
+        aprobadoPor: 'Gerencia Sucursal Vallejo',
+        estado: 'Aprobado y Ajustado'
+      });
+
+      state.movimientos.push({
+        idMov: `MOV-${9000 + state.movimientos.length + 1}`,
+        fecha: ahora,
+        tipo: `CONCILIACIÓN ABC (${causa})`,
+        objeto: id,
+        cantidad: `Ajuste: ${dif} m → Nuevo Saldo: ${conteoFis.toFixed(2)} m`,
+        usuario: 'Coord. Almacén + Gerencia',
+        doc: folioConc,
+        tiempoCapturaMin: 2
+      });
+
+      saveAppState(state);
+      playScannerSound('ok');
+
+      const m = calculateMetrics(state);
+      document.getElementById('conciliacionAlert').innerHTML = `
+        <div class="alert alert-success">
+          <span>✅ <strong>Protocolo de Conciliación completado (${folioConc}):</strong> El rollo <code>${id}</code> quedó conciliado a <strong>${conteoFis.toFixed(2)} m</strong> bajo causa raíz <em>"${causa}"</em>. El Índice ERI subió a <strong>${m.eri}%</strong>.</span>
+          <a href="index.html" class="btn btn-success btn-sm">Ver impacto en Tablero KPIs →</a>
+        </div>
+      `;
+
+      renderTablaConteos();
+    }
+
+    renderTablaConteos();
+  </script>
+</body>
+</html>

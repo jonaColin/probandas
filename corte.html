@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Módulo 2: Registro de Cortes en Piso (PCC-3) | Probandas México</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="brand-badge">PROBANDAS MÉXICO</span>
+      <h1>SICT-Banda Plana</h1>
+      <p>Sucursal Nueva Industrial Vallejo</p>
+    </div>
+    <ul class="nav-links">
+      <li class="nav-section-label">Inteligencia de Negocios</li>
+      <li>
+        <a href="index.html">
+          <span>📊 Tablero Ejecutivo KPIs</span>
+          <span class="nav-pcc">RF-06</span>
+        </a>
+      </li>
+      <li class="nav-section-label">Módulos Operativos (POE-INV-01)</li>
+      <li>
+        <a href="recepcion.html">
+          <span>🏷️ 1. Recepción y Etiquetado</span>
+          <span class="nav-pcc">PCC-1</span>
+        </a>
+      </li>
+      <li>
+        <a href="corte.html" class="active">
+          <span>✂️ 2. Corte en Piso y Retazos</span>
+          <span class="nav-pcc">PCC-3</span>
+        </a>
+      </li>
+      <li>
+        <a href="consulta.html">
+          <span>🔍 3. Consulta y Trazabilidad</span>
+          <span class="nav-pcc">PCC-4</span>
+        </a>
+      </li>
+      <li>
+        <a href="conteos.html">
+          <span>📋 4. Conteos Cíclicos ABC</span>
+          <span class="nav-pcc">PCC-2</span>
+        </a>
+      </li>
+    </ul>
+    <div class="sidebar-footer">
+      <div class="erp-sync-box">
+        <div class="erp-sync-status">
+          <span class="dot-online"></span> Terminal Táctil Taller Corte
+        </div>
+        <div style="margin-top:4px; font-size:11px; color:#94a3b8;">
+          Lector Óptico Handheld Code 128
+        </div>
+      </div>
+      <div>Responsable: Operador de Corte</div>
+    </div>
+  </aside>
+
+  <div class="main-wrapper">
+    <header class="topbar">
+      <div class="topbar-title">
+        <h2>Módulo 2: Registro de Cortes en Piso y Control de Mermas / Retazos (PCC-3)</h2>
+        <p>Interfaz táctil de 3 pasos • Ecuación de Conservación Dimensional y Genealogía Padre-Hijo (RF-02 y RF-03)</p>
+      </div>
+      <div class="topbar-actions">
+        <button class="btn btn-outline btn-sm" onclick="simularEscaneoCalidad()">🔊 Probar Alerta Rollo en Calidad (RM-2026-00006)</button>
+      </div>
+    </header>
+
+    <main class="content">
+      <!-- Indicador de 3 pasos (Ajuste de Validación 5.6.3.1) -->
+      <div class="stepper">
+        <div class="step-pill active">
+          <span class="step-num">1</span> Escanear Código Padre (Handheld Code 128)
+        </div>
+        <div class="step-pill active">
+          <span class="step-num">2</span> Capturar Corte y Validar Balance Dimensional
+        </div>
+        <div class="step-pill active">
+          <span class="step-num">3</span> Confirmar e Imprimir Etiqueta Hijo (RT-PADRE-XX)
+        </div>
+      </div>
+
+      <!-- Contenedor de Alerta Sonora / Visual de Calidad o Confirmación -->
+      <div id="corteAlertBox"></div>
+
+      <div class="grid-2">
+        <!-- Panel Izquierdo: Escaneo y Captura con Balance Dimensional Automático -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3>Orden de Corte y Balance Dimensional en Tiempo Real</h3>
+              <span class="subtitle">Longitud Inicial = Longitud Cortada (Cliente) + Longitud Retazo Útil + Longitud Merma Técnica</span>
+            </div>
+            <span class="badge badge-info">POE-INV-01 Fase 3</span>
+          </div>
+
+          <form id="formCorte" onsubmit="ejecutarCorte(event)">
+            <div class="form-grid">
+              <div class="form-group full">
+                <label>Paso 1: Escanear o Seleccionar Rollo Madre / Retazo Origen (Code 128) *</label>
+                <div style="display:flex; gap:8px;">
+                  <select id="selRolloOrigen" onchange="onSelectRollo()" style="flex:1; font-weight:700;"></select>
+                  <button type="button" class="btn btn-outline" onclick=" triggerScanBeep()">🔫 Simular Escaneo</button>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Folio Orden de Corte (Taller) *</label>
+                <input type="text" id="inpIdOrden" class="mono" value="OC-2026-0143" required />
+              </div>
+
+              <div class="form-group">
+                <label>Folio Pedido Ventas / Cliente *</label>
+                <input type="text" id="inpFolioPedido" value="PED-VAL-4118 (Grupo Modelo)" required />
+              </div>
+
+              <div class="form-group">
+                <label>Longitud Solicitada Cliente (m) *</label>
+                <input type="number" step="0.1" min="0.5" id="inpLargoCliente" value="15.0" required oninput="recalcularBalance()" />
+              </div>
+
+              <div class="form-group">
+                <label>Merma Técnica de Ajuste / Escuadra (m) *</label>
+                <input type="number" step="0.05" min="0" id="inpLargoMerma" value="0.30" required oninput="recalcularBalance()" />
+              </div>
+
+              <div class="form-group">
+                <label>Ancho Requerido por Cliente (mm) *</label>
+                <input type="number" step="10" min="20" id="inpAnchoCorte" value="800" required oninput="recalcularBalance()" />
+              </div>
+
+              <div class="form-group">
+                <label>Operador Responsable en Mesa de Corte</label>
+                <select id="inpOperador">
+                  <option value="J. Tapia (Taller Corte)">J. Tapia (Taller Corte)</option>
+                  <option value="A. Rubio (Taller Corte)">A. Rubio (Taller Corte)</option>
+                  <option value="E. Vázquez (Taller Corte)">E. Vázquez (Taller Corte)</option>
+                </select>
+              </div>
+            </div>
+
+            <!-- Caja de Ecuación de Conservación Dimensional (Sección 5.2.4) -->
+            <div class="balance-box">
+              <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-size:12.5px; font-weight:800; color:#0f172a;">
+                  ECUACIÓN DE CONSERVACIÓN DIMENSIONAL (SECCIÓN 5.2.4)
+                </span>
+                <span id="reglaRetazoBadge" class="badge badge-success">Retazo Útil Aprovechable (≥ 0.5m y ≥ 50mm)</span>
+              </div>
+
+              <div class="balance-formula">
+                <div class="formula-item">
+                  <div class="f-label">Longitud Inicial</div>
+                  <div class="f-val mono" id="valInicial">68.50 m</div>
+                </div>
+                <div class="formula-op">=</div>
+                <div class="formula-item" style="border-color:var(--primary);">
+                  <div class="f-label">Tramo Cliente</div>
+                  <div class="f-val mono" style="color:var(--primary);" id="valCliente">15.00 m</div>
+                </div>
+                <div class="formula-op">+</div>
+                <div class="formula-item" style="border-color:var(--success);">
+                  <div class="f-label">Retazo Remanente</div>
+                  <div class="f-val mono" style="color:var(--success);" id="valRetazo">53.20 m</div>
+                </div>
+                <div class="formula-op">+</div>
+                <div class="formula-item" style="border-color:var(--danger);">
+                  <div class="f-label">Merma Técnica</div>
+                  <div class="f-val mono" style="color:var(--danger);" id="valMerma">0.30 m</div>
+                </div>
+              </div>
+
+              <div class="roll-bar-visual" id="rollBarVisual"></div>
+              <div style="display:flex; justify-content:space-between; font-size:11.5px; color:var(--text-muted); margin-top:6px;">
+                <span id="txtDetalleAncho">Ancho Original: 1200 mm → Corte: 800 mm | Sobrante Longitudinal: 400 mm</span>
+                <span id="txtPctMerma">Merma del corte: 1.96% (Meta &lt; 3%)</span>
+              </div>
+            </div>
+
+            <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:14px;">
+              <button type="submit" id="btnConfirmarCorte" class="btn btn-success btn-lg" style="width:100%;">
+                ✂️ Paso 3: Confirmar Fraccionamiento, Descontar Stock e Imprimir Etiqueta Hijo
+              </button>
+            </div>
+          </form>
+        </div>
+
+        <!-- Panel Derecho: Etiqueta de Retazo Hijo Generada (Ajuste 5.6.3.3: Dimensión en mm en gran tamaño) -->
+        <div class="card">
+          <div class="card-header">
+            <div>
+              <h3>Etiqueta Automática de Retazo Hijo (Genealogía Padre-Hijo)</h3>
+              <span class="subtitle">Estructura Code 128: RT-PADRE-XX • Tipografía de ancho en mm aumentada (Ajuste 5.6.3)</span>
+            </div>
+            <span class="badge badge-info">RF-02</span>
+          </div>
+
+          <div class="thermal-label">
+            <div class="thermal-header">
+              <span>RETAZO ÚTIL APROVECHABLE • PROBANDAS</span>
+              <span id="hijoAbc">CLASE A</span>
+            </div>
+            <div style="font-size:12.5px; font-weight:800;" id="hijoNombre">
+              Banda Plana PU Grado Alimenticio Blanca
+            </div>
+            <div style="font-size:11px; color:#475569; margin-top:2px;" id="hijoPadreLink">
+              Origen Padre: RM-2026-00001 | Lote: FORBO-2605-A1
+            </div>
+
+            <!-- Ajuste 5.6.3.3: Dimensión en milímetros en tipografía de mayor tamaño -->
+            <div class="thermal-dims-large" id="hijoDimsBig" style="font-size:24px; letter-spacing:0.5px;">
+              ANCHO: 400 mm × 15.0 m
+            </div>
+            <div style="font-size:12px; font-weight:700; color:#065f46; margin-bottom:4px;" id="hijoRolloRem">
+              + Saldo Rollo Madre en Rack: 53.20 m × 1200 mm
+            </div>
+
+            <div class="barcode-bars"></div>
+            <div class="thermal-code" id="hijoBarcode">RT-RM-2026-00001-02</div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; text-align:left; font-size:11px; border-top:1px solid #cbd5e1; padding-top:8px; margin-top:6px; gap:4px;">
+              <div><strong>Ubicación Retorno:</strong> <span id="hijoRack">Rack A-01-R</span></div>
+              <div><strong>Orden Corte:</strong> <span id="hijoOrden">OC-2026-0143</span></div>
+              <div><strong>Clasificación:</strong> <span id="hijoClasif">Retazo Útil (≥0.5m, ≥50mm)</span></div>
+              <div><strong>Fecha:</strong> <span id="hijoFecha">Hoy</span></div>
+            </div>
+          </div>
+
+          <div style="margin-top:18px;">
+            <h4 style="font-size:13.5px; margin-bottom:8px;">Historial de Fraccionamientos en Piso (DETALLE_FRACCIONAMIENTO)</h4>
+            <div class="table-container">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Orden</th>
+                    <th>Rollo Padre</th>
+                    <th>Tramo Cliente</th>
+                    <th>Retazo / Hijo</th>
+                    <th>Merma</th>
+                  </tr>
+                </thead>
+                <tbody id="tablaCortesBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+  <script>
+    let selectedRollo = null;
+
+    function initCorte() {
+      const state = getAppState();
+      const sel = document.getElementById('selRolloOrigen');
+      sel.innerHTML = state.rollos.map(r => `
+        <option value="${r.id}">
+          [${r.id}] ${r.nombre} — Disp: ${Number(r.largoActual).toFixed(1)}m × ${r.anchoMm}mm (${r.estado})
+        </option>
+      `).join('');
+
+      document.getElementById('inpIdOrden').value = `OC-2026-0${141 + state.ordenesCorte.length}`;
+      onSelectRollo();
+      renderTablaCortes();
+    }
+
+    function triggerScanBeep() {
+      onSelectRollo(true);
+    }
+
+    // Ajuste 5.6.3.2: Botón rápido para demostrar la alerta sonora al seleccionar un rollo "En Inspección de Calidad"
+    function simularEscaneoCalidad() {
+      const sel = document.getElementById('selRolloOrigen');
+      sel.value = 'RM-2026-00006';
+      onSelectRollo(true);
+    }
+
+    function onSelectRollo(withSound = false) {
+      const state = getAppState();
+      const id = document.getElementById('selRolloOrigen').value;
+      selectedRollo = state.rollos.find(r => r.id === id) || state.rollos[0];
+
+      const alertBox = document.getElementById('corteAlertBox');
+      const btn = document.getElementById('btnConfirmarCorte');
+
+      if (selectedRollo.estado === 'En Inspección de Calidad') {
+        playScannerSound('error');
+        alertBox.innerHTML = `
+          <div class="alert alert-danger">
+            <div>
+              🚨 <strong>ALERTA SONORA Y BLOQUEO DE CALIDAD (Ajuste Validación 5.6.3):</strong>
+              El rollo escaneado <code>${selectedRollo.id}</code> (${selectedRollo.nombre}) tiene estado
+              <strong>"En Inspección de Calidad"</strong>. No puede fraccionarse hasta su liberación por el Encargado de Calidad.
+            </div>
+            <span class="badge badge-danger">BLOQUEADO PCC-3</span>
+          </div>
+        `;
+        btn.disabled = true;
+        btn.style.opacity = '0.5';
+      } else {
+        if (withSound) playScannerSound('ok');
+        alertBox.innerHTML = '';
+        btn.disabled = false;
+        btn.style.opacity = '1';
+      }
+
+      document.getElementById('inpAnchoCorte').max = selectedRollo.anchoMm;
+      if (Number(document.getElementById('inpAnchoCorte').value) > selectedRollo.anchoMm) {
+        document.getElementById('inpAnchoCorte').value = selectedRollo.anchoMm;
+      }
+
+      recalcularBalance();
+    }
+
+    function recalcularBalance() {
+      if (!selectedRollo) return;
+      const state = getAppState();
+      const largoInicial = Number(selectedRollo.largoActual);
+      const largoCliente = Number(document.getElementById('inpLargoCliente').value || 0);
+      let largoMerma = Number(document.getElementById('inpLargoMerma').value || 0);
+      const anchoOrig = Number(selectedRollo.anchoMm);
+      const anchoCorte = Number(document.getElementById('inpAnchoCorte').value || 0);
+
+      let largoRetazo = Number((largoInicial - largoCliente - largoMerma).toFixed(2));
+      const anchoSobrante = Math.max(0, anchoOrig - anchoCorte);
+
+      // Regla de negocio Sección 5.2.4: Longitud >= 0.5m y Ancho >= 50mm
+      const badge = document.getElementById('reglaRetazoBadge');
+      let clasifTexto = 'Retazo Útil Aprovechable (≥ 0.5m y ≥ 50mm)';
+
+      if (largoRetazo > 0 && largoRetazo < 0.5) {
+        // Si el remanente longitudinal es menor a 0.5 m se convierte automáticamente en Merma Operativa No Reutilizable
+        largoMerma = Number((largoMerma + largoRetazo).toFixed(2));
+        largoRetazo = 0;
+        badge.className = 'badge badge-danger';
+        badge.textContent = 'Remanente < 0.5m → Clasificado como Merma Operativa No Reutilizable';
+        clasifTexto = 'Merma Operativa No Reutilizable (< 0.5m)';
+      } else if (anchoSobrante > 0 && anchoSobrante < 50) {
+        badge.className = 'badge badge-warning';
+        badge.textContent = `Faja lateral de ${anchoSobrante}mm < 50mm → Merma Lateral No Reutilizable`;
+        clasifTexto = 'Faja lateral < 50mm (Merma)';
+      } else {
+        badge.className = 'badge badge-success';
+        badge.textContent = 'Cumple Regla 5.2.4: Retazo Útil Aprovechable (≥ 0.5m y ≥ 50mm)';
+      }
+
+      document.getElementById('valInicial').textContent = `${largoInicial.toFixed(2)} m`;
+      document.getElementById('valCliente').textContent = `${largoCliente.toFixed(2)} m`;
+      document.getElementById('valRetazo').textContent = `${Math.max(0, largoRetazo).toFixed(2)} m`;
+      document.getElementById('valMerma').textContent = `${largoMerma.toFixed(2)} m`;
+
+      const pctCut = Math.max(5, Math.min(100, (largoCliente / largoInicial) * 100));
+      const pctRem = Math.max(0, Math.min(100, (Math.max(0, largoRetazo) / largoInicial) * 100));
+      const pctWaste = Math.max(3, 100 - pctCut - pctRem);
+
+      document.getElementById('rollBarVisual').innerHTML = `
+        <div class="roll-seg-cut" style="width:${pctCut}%">Cliente: ${largoCliente.toFixed(1)}m</div>
+        <div class="roll-seg-rem" style="width:${pctRem}%">Remanente: ${Math.max(0, largoRetazo).toFixed(1)}m</div>
+        <div class="roll-seg-waste" style="width:${pctWaste}%">Merma</div>
+      `;
+
+      const pctMerma = largoCliente > 0 ? ((largoMerma / (largoCliente + largoMerma)) * 100).toFixed(2) : '0.00';
+      document.getElementById('txtDetalleAncho').textContent =
+        `Ancho Rollo: ${anchoOrig} mm → Ancho Pedido: ${anchoCorte} mm | Sobrante Transversal: ${anchoSobrante} mm`;
+      document.getElementById('txtPctMerma').textContent = `Merma del corte: ${pctMerma}% (Meta < 3.0%)`;
+
+      // Actualizar vista previa de etiqueta Hijo
+      const hijosCount = state.rollos.filter(r => r.padreId === selectedRollo.id).length + 1;
+      const basePadre = selectedRollo.padreId || selectedRollo.id;
+      const codigoHijo = `RT-${basePadre}-${String(hijosCount).padStart(2, '0')}`;
+
+      document.getElementById('hijoAbc').textContent = `CLASE ${selectedRollo.abc}`;
+      document.getElementById('hijoNombre').textContent = `Retazo Útil ${selectedRollo.polimero} (${selectedRollo.codigoRef})`;
+      document.getElementById('hijoPadreLink').textContent = `Origen Padre: ${selectedRollo.id} | Lote: ${selectedRollo.lote}`;
+
+      if (anchoSobrante >= 50) {
+        document.getElementById('hijoDimsBig').textContent = `ANCHO: ${anchoSobrante} mm × ${largoCliente.toFixed(1)} m`;
+      } else {
+        document.getElementById('hijoDimsBig').textContent = `ANCHO: ${anchoOrig} mm × ${Math.max(0, largoRetazo).toFixed(1)} m`;
+      }
+
+      document.getElementById('hijoRolloRem').textContent =
+        `Saldo Rollo Madre Actualizado: ${Math.max(0, largoRetazo).toFixed(2)} m × ${anchoOrig} mm`;
+      document.getElementById('hijoBarcode').textContent = codigoHijo;
+      document.getElementById('hijoRack').textContent = `${selectedRollo.rack}-R`;
+      document.getElementById('hijoOrden').textContent = document.getElementById('inpIdOrden').value;
+      document.getElementById('hijoClasif').textContent = clasifTexto;
+      document.getElementById('hijoFecha').textContent = formatNow();
+    }
+
+    function ejecutarCorte(e) {
+      e.preventDefault();
+      if (!selectedRollo || selectedRollo.estado === 'En Inspección de Calidad') return;
+
+      const state = getAppState();
+      const idx = state.rollos.findIndex(r => r.id === selectedRollo.id);
+      if (idx === -1) return;
+
+      const largoInicial = Number(state.rollos[idx].largoActual);
+      const largoCliente = Number(document.getElementById('inpLargoCliente').value);
+      let largoMerma = Number(document.getElementById('inpLargoMerma').value);
+      const anchoOrig = Number(state.rollos[idx].anchoMm);
+      const anchoCorte = Number(document.getElementById('inpAnchoCorte').value);
+      const anchoSobrante = Math.max(0, anchoOrig - anchoCorte);
+
+      if (largoCliente + largoMerma > largoInicial) {
+        alert('Error de validación dimensional: La longitud solicitada + merma supera la longitud disponible en el rollo.');
+        return;
+      }
+
+      let nuevoSaldoMadre = Number((largoInicial - largoCliente - largoMerma).toFixed(2));
+      if (nuevoSaldoMadre > 0 && nuevoSaldoMadre < 0.5) {
+        largoMerma = Number((largoMerma + nuevoSaldoMadre).toFixed(2));
+        nuevoSaldoMadre = 0;
+      }
+
+      // Actualizar saldo del Rollo Madre
+      state.rollos[idx].largoActual = nuevoSaldoMadre;
+      state.rollos[idx].conteoFisico = nuevoSaldoMadre;
+
+      const codigoHijo = document.getElementById('hijoBarcode').textContent;
+      const ahora = formatNow();
+      const idOrden = document.getElementById('inpIdOrden').value;
+      const folioPedido = document.getElementById('inpFolioPedido').value;
+      const operador = document.getElementById('inpOperador').value;
+
+      // Si el corte longitudinal dejó un retazo lateral aprovechable (>= 50mm y >= 0.5m), crear registro Hijo
+      let generoHijo = false;
+      if (anchoSobrante >= 50 && largoCliente >= 0.5) {
+        generoHijo = true;
+        state.rollos.push({
+          id: codigoHijo,
+          tipo: 'HIJO',
+          padreId: selectedRollo.id,
+          codigoRef: selectedRollo.codigoRef,
+          nombre: `Retazo Útil ${selectedRollo.polimero} (${anchoSobrante}mm)`,
+          familia: selectedRollo.familia,
+          polimero: selectedRollo.polimero,
+          lote: selectedRollo.lote,
+          facturaBind: selectedRollo.facturaBind,
+          largoInicial: largoCliente,
+          largoActual: largoCliente,
+          anchoMm: anchoSobrante,
+          espesorMm: selectedRollo.espesorMm,
+          abc: selectedRollo.abc,
+          rack: `${selectedRollo.rack}-R`,
+          estado: 'Disponible',
+          fechaIngreso: ahora,
+          conteoFisico: largoCliente,
+          fechaConteo: ahora.slice(0, 10),
+          conciliado: true
+        });
+      }
+
+      state.ordenesCorte.unshift({
+        idOrden,
+        folioPedido,
+        cliente: folioPedido,
+        idRolloOrigen: selectedRollo.id,
+        operador,
+        fechaHora: ahora,
+        largoInicialM: largoInicial,
+        largoClienteM: largoCliente,
+        largoRetazoM: nuevoSaldoMadre,
+        largoMermaM: largoMerma,
+        anchoCorteMm: anchoCorte,
+        anchoRemanenteMm: anchoSobrante,
+        codigoHijoGenerado: generoHijo ? codigoHijo : `SALDO-${selectedRollo.id}`,
+        clasificacionSobrante: generoHijo ? 'Retazo Hijo Generado' : 'Saldo en Rollo Madre'
+      });
+
+      state.movimientos.push({
+        idMov: `MOV-${9000 + state.movimientos.length + 1}`,
+        fecha: ahora,
+        tipo: 'CORTE / FRACCIONAMIENTO (PCC-3)',
+        objeto: `${selectedRollo.id} → ${generoHijo ? codigoHijo : 'Saldo Madre'}`,
+        cantidad: `-${(largoCliente + largoMerma).toFixed(2)} m (Cliente: ${largoCliente}m | Merma: ${largoMerma}m)`,
+        usuario: operador,
+        doc: idOrden,
+        tiempoCapturaMin: 1
+      });
+
+      saveAppState(state);
+      playScannerSound('ok');
+
+      document.getElementById('corteAlertBox').innerHTML = `
+        <div class="alert alert-success">
+          <span>✅ <strong>Fraccionamiento registrado en 3 clics:</strong> Rollo <code>${selectedRollo.id}</code> actualizado a <strong>${nuevoSaldoMadre.toFixed(2)} m</strong>. ${generoHijo ? `Se generó Retazo Hijo <code>${codigoHijo}</code> (${largoCliente}m × ${anchoSobrante}mm).` : ''}</span>
+          <a href="consulta.html" class="btn btn-success btn-sm">Ver Genealogía Padre-Hijo →</a>
+        </div>
+      `;
+
+      initCorte();
+    }
+
+    function renderTablaCortes() {
+      const state = getAppState();
+      document.getElementById('tablaCortesBody').innerHTML = state.ordenesCorte.map(o => `
+        <tr>
+          <td class="mono">${o.idOrden}<div style="font-size:11px; color:var(--text-muted);">${o.folioPedido}</div></td>
+          <td class="mono">${o.idRolloOrigen}</td>
+          <td class="mono"><strong>${Number(o.largoClienteM).toFixed(2)} m</strong> × ${o.anchoCorteMm} mm</td>
+          <td class="mono" style="color:var(--success);">${o.codigoHijoGenerado}<br/>Rem: ${Number(o.largoRetazoM).toFixed(2)} m</td>
+          <td class="mono" style="color:var(--danger);">${Number(o.largoMermaM).toFixed(2)} m</td>
+        </tr>
+      `).join('');
+    }
+
+    initCorte();
+  </script>
+</body>
+</html>
