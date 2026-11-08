@@ -197,10 +197,10 @@
               <h3>Etiqueta Automática de Retazo Hijo (Genealogía Padre-Hijo)</h3>
               <span class="subtitle">Estructura Code 128: RT-PADRE-XX • Tipografía de ancho en mm aumentada (Ajuste 5.6.3)</span>
             </div>
-            <span class="badge badge-info">RF-02</span>
+            <button type="button" class="btn btn-outline btn-sm" onclick="printThermalLabel('#thermalHijoPreview')">🖨️ Imprimir Solo Etiqueta</button>
           </div>
 
-          <div class="thermal-label">
+          <div class="thermal-label" id="thermalHijoPreview">
             <div class="thermal-header">
               <span>RETAZO ÚTIL APROVECHABLE • PROBANDAS</span>
               <span id="hijoAbc">CLASE A</span>
@@ -257,17 +257,21 @@
   <script>
     let selectedRollo = null;
 
-    function initCorte() {
+    function initCorte(preserveAlert = false) {
       const state = getAppState();
       const sel = document.getElementById('selRolloOrigen');
+      const prevId = selectedRollo ? selectedRollo.id : null;
       sel.innerHTML = state.rollos.map(r => `
         <option value="${r.id}">
           [${r.id}] ${r.nombre} — Disp: ${Number(r.largoActual).toFixed(1)}m × ${r.anchoMm}mm (${r.estado})
         </option>
       `).join('');
+      if (prevId && state.rollos.some(r => r.id === prevId)) {
+        sel.value = prevId;
+      }
 
       document.getElementById('inpIdOrden').value = `OC-2026-0${141 + state.ordenesCorte.length}`;
-      onSelectRollo();
+      onSelectRollo(false, preserveAlert);
       renderTablaCortes();
     }
 
@@ -282,7 +286,7 @@
       onSelectRollo(true);
     }
 
-    function onSelectRollo(withSound = false) {
+    function onSelectRollo(withSound = false, preserveAlert = false) {
       const state = getAppState();
       const id = document.getElementById('selRolloOrigen').value;
       selectedRollo = state.rollos.find(r => r.id === id) || state.rollos[0];
@@ -306,7 +310,7 @@
         btn.style.opacity = '0.5';
       } else {
         if (withSound) playScannerSound('ok');
-        alertBox.innerHTML = '';
+        if (!preserveAlert) alertBox.innerHTML = '';
         btn.disabled = false;
         btn.style.opacity = '1';
       }
@@ -444,7 +448,7 @@
           familia: selectedRollo.familia,
           polimero: selectedRollo.polimero,
           lote: selectedRollo.lote,
-          facturaBind: selectedRollo.facturaBind,
+          ordenCompra: selectedRollo.ordenCompra,
           largoInicial: largoCliente,
           largoActual: largoCliente,
           anchoMm: anchoSobrante,
@@ -493,11 +497,14 @@
       document.getElementById('corteAlertBox').innerHTML = `
         <div class="alert alert-success">
           <span>✅ <strong>Fraccionamiento registrado en 3 clics:</strong> Rollo <code>${selectedRollo.id}</code> actualizado a <strong>${nuevoSaldoMadre.toFixed(2)} m</strong>. ${generoHijo ? `Se generó Retazo Hijo <code>${codigoHijo}</code> (${largoCliente}m × ${anchoSobrante}mm).` : ''}</span>
-          <a href="consulta.html" class="btn btn-success btn-sm">Ver Genealogía Padre-Hijo →</a>
+          <div style="display:flex; gap:8px;">
+            <button type="button" class="btn btn-outline btn-sm" onclick="printThermalLabel('#thermalHijoPreview')">🖨️ Imprimir Etiqueta Hijo</button>
+            <a href="consulta.html" class="btn btn-success btn-sm">Ver Genealogía Padre-Hijo →</a>
+          </div>
         </div>
       `;
 
-      initCorte();
+      initCorte(true);
     }
 
     function renderTablaCortes() {

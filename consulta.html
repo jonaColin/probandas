@@ -164,7 +164,7 @@
       <div class="card-header">
         <div>
           <h3 id="mdlTitulo">Trazabilidad Completa y Genealogía Padre-Hijo</h3>
-          <span class="subtitle">Rastreo desde Factura ERP BIND → Rollo Madre → Cortes en Taller → Retazos Hijos</span>
+          <span class="subtitle">Rastreo desde Orden de Compra / Recepción → Rollo Madre → Cortes en Taller → Retazos Hijos</span>
         </div>
         <button class="btn btn-outline btn-sm" onclick="cerrarModal()">✕ Cerrar</button>
       </div>
@@ -212,7 +212,7 @@
           <td>
             ${r.tipo === 'HIJO'
               ? `<span class="badge badge-info">RETAZO HIJO</span><div style="font-size:11px; color:var(--text-muted);">Padre: ${r.padreId}</div>`
-              : `<span class="badge badge-neutral">ROLLO MADRE</span><div style="font-size:11px; color:var(--text-muted);">${r.facturaBind}</div>`
+              : `<span class="badge badge-neutral">ROLLO MADRE</span><div style="font-size:11px; color:var(--text-muted);">${r.ordenCompra || ''}</div>`
             }
           </td>
           <td><span class="badge badge-abc-${r.abc}">${r.abc}</span></td>
@@ -287,9 +287,9 @@
       document.getElementById('mdlTitulo').textContent = `Árbol de Genealogía Padre-Hijo: ${padre.id}`;
       document.getElementById('mdlContenido').innerHTML = `
         <div style="background:#f8fafc; padding:14px; border-radius:8px; border:1px solid var(--border); margin-bottom:14px;">
-          <div style="font-size:12px; color:var(--text-muted); font-weight:700;">1. ALTA ADMINISTRATIVA Y RECEPCIÓN FÍSICA (PCC-1)</div>
+          <div style="font-size:12px; color:var(--text-muted); font-weight:700;">1. RECEPCIÓN FÍSICA Y REGISTRO DE ORIGEN (PCC-1)</div>
           <div style="margin-top:4px; font-size:13.5px;">
-            <strong>Factura ERP BIND:</strong> <span class="mono">${padre.facturaBind}</span> |
+            <strong>Orden Compra / Remisión:</strong> <span class="mono">${padre.ordenCompra || ''}</span> |
             <strong>Lote Proveedor:</strong> <span class="mono">${padre.lote}</span> |
             <strong>Fecha Ingreso:</strong> ${padre.fechaIngreso}
           </div>

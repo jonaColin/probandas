@@ -50,10 +50,10 @@
     <div class="sidebar-footer">
       <div class="erp-sync-box">
         <div class="erp-sync-status">
-          <span class="dot-online"></span> Conector ERP BIND Activo
+          <span class="dot-online"></span> Registro Centralizado Activo
         </div>
         <div style="margin-top:4px; font-size:11px; color:#94a3b8;">
-          Cotejo Factura/Remisión PCC-1
+          Cotejo Orden Compra / Remisión PCC-1
         </div>
       </div>
       <div>Responsable: Coordinador Almacén</div>
@@ -64,7 +64,7 @@
     <header class="topbar">
       <div class="topbar-title">
         <h2>Módulo 1: Recepción de Rollos Madre y Etiquetado Óptico (PCC-1)</h2>
-        <p>POE-INV-01 Fase 1: Cotejo con ERP BIND, validación dimensional (m × mm) y emisión de Etiqueta Padre Code 128</p>
+        <p>POE-INV-01 Fase 1: Cotejo de orden de compra, validación dimensional (m × mm) y emisión de Etiqueta Padre Code 128</p>
       </div>
       <div class="topbar-actions">
         <span class="badge badge-info">Simbología: GS1 / Code 128 (RM-AAAA-LLLLL)</span>
@@ -79,8 +79,8 @@
         <div class="card">
           <div class="card-header">
             <div>
-              <h3>Alta Dimensional de Rollo Madre e Integración con Factura BIND</h3>
-              <span class="subtitle">Cierra la brecha del PCC-1 vinculando el alta contable de BIND con la unidad física en piso</span>
+              <h3>Alta Dimensional de Rollo Madre y Registro de Recepción</h3>
+              <span class="subtitle">Cierra la brecha del PCC-1 vinculando la orden de recepción con la unidad física en piso</span>
             </div>
             <span class="badge badge-success">RF-01 y RF-02</span>
           </div>
@@ -93,8 +93,8 @@
               </div>
 
               <div class="form-group">
-                <label>Folio Factura / Orden Compra ERP BIND *</label>
-                <input type="text" id="inpFacturaBind" value="FAC-BIND-9215" required oninput="updateLabelPreview()" />
+                <label>Folio Orden de Compra / Remisión *</label>
+                <input type="text" id="inpOrdenCompra" value="OC-PROV-9215" required oninput="updateLabelPreview()" />
               </div>
 
               <div class="form-group">
@@ -152,7 +152,7 @@
             </div>
 
             <div style="margin-top:18px; display:flex; gap:10px; justify-content:flex-end;">
-              <button type="button" class="btn btn-outline" onclick="window.print()">🖨️ Imprimir Etiqueta Térmica</button>
+              <button type="button" class="btn btn-outline" onclick="printThermalLabel('#thermalPreview')">🖨️ Imprimir Etiqueta Térmica</button>
               <button type="submit" class="btn btn-primary btn-lg">✅ Registrar Rollo Madre y Emitir Código Padre</button>
             </div>
           </form>
@@ -165,7 +165,7 @@
               <h3>Vista Previa de Etiqueta Térmica Industrial (Code 128)</h3>
               <span class="subtitle">Papel térmico resistente a fricción • Tipografía dimensional de alto contraste (Ajuste 5.6.3)</span>
             </div>
-            <span class="badge badge-neutral">Etiqueta Padre</span>
+            <button type="button" class="btn btn-outline btn-sm" onclick="printThermalLabel('#thermalPreview')">🖨️ Imprimir Solo Etiqueta</button>
           </div>
 
           <div class="thermal-label" id="thermalPreview">
@@ -189,14 +189,14 @@
 
             <div style="display:grid; grid-template-columns:1fr 1fr; text-align:left; font-size:11px; border-top:1px solid #cbd5e1; padding-top:8px; margin-top:6px; gap:4px;">
               <div><strong>Lote Prov:</strong> <span id="lblLote">FORBO-2611-N1</span></div>
-              <div><strong>ERP BIND:</strong> <span id="lblBind">FAC-BIND-9215</span></div>
+              <div><strong>Orden Compra:</strong> <span id="lblOrdenCompra">OC-PROV-9215</span></div>
               <div><strong>Ubicación:</strong> <span id="lblRack">Rack A-01</span></div>
               <div><strong>Estado:</strong> <span id="lblEstado">Disponible</span></div>
             </div>
           </div>
 
           <div style="margin-top:16px; background:#f8fafc; padding:12px; border-radius:8px; border:1px solid var(--border); font-size:12px; color:#475569;">
-            <strong>Regla de Control POE-INV-01 (PCC-1):</strong> Ningún rollo madre puede colocarse en estantería sin portar su etiqueta adherida con código Padre <code>RM-AAAA-LLLLL</code> y haber validado su longitud lineal (m) y ancho útil (mm) contra la factura del ERP BIND.
+            <strong>Regla de Control POE-INV-01 (PCC-1):</strong> Ningún rollo madre puede colocarse en estantería sin portar su etiqueta adherida con código Padre <code>RM-AAAA-LLLLL</code> y haber validado su longitud lineal (m) y ancho útil (mm) contra la remisión y orden de compra.
           </div>
         </div>
       </div>
@@ -216,7 +216,7 @@
                 <th>Código Padre (Code 128)</th>
                 <th>ABC</th>
                 <th>Referencia y Polímero</th>
-                <th>Lote / Factura BIND</th>
+                <th>Lote / Orden Compra</th>
                 <th>Longitud Inicial</th>
                 <th>Longitud Actual</th>
                 <th>Ancho × Espesor</th>
@@ -264,7 +264,7 @@
       document.getElementById('lblDims').textContent = `${largo} m × ${ancho} mm (Esp: ${espesor} mm)`;
       document.getElementById('lblBarcode').textContent = idPadre;
       document.getElementById('lblLote').textContent = document.getElementById('inpLote').value;
-      document.getElementById('lblBind').textContent = document.getElementById('inpFacturaBind').value;
+      document.getElementById('lblOrdenCompra').textContent = document.getElementById('inpOrdenCompra').value;
       document.getElementById('lblRack').textContent = document.getElementById('inpRack').value;
       document.getElementById('lblEstado').textContent = document.getElementById('inpEstado').value;
     }
@@ -281,7 +281,7 @@
       const abc = document.getElementById('inpAbc').value;
       const rack = document.getElementById('inpRack').value;
       const lote = document.getElementById('inpLote').value;
-      const facturaBind = document.getElementById('inpFacturaBind').value;
+      const ordenCompra = document.getElementById('inpOrdenCompra').value;
       const estado = document.getElementById('inpEstado').value;
       const ahora = formatNow();
 
@@ -294,7 +294,7 @@
         familia,
         polimero,
         lote,
-        facturaBind,
+        ordenCompra,
         largoInicial: largo,
         largoActual: largo,
         anchoMm,
@@ -315,7 +315,7 @@
         objeto: id,
         cantidad: `+${largo.toFixed(1)} m × ${anchoMm} mm`,
         usuario: 'M. Ibañez (Coord. Almacén)',
-        doc: facturaBind,
+        doc: ordenCompra,
         tiempoCapturaMin: 1
       });
 
@@ -324,7 +324,7 @@
 
       document.getElementById('alertContainer').innerHTML = `
         <div class="alert alert-success">
-          <span>✅ Rollo Madre <strong>${id}</strong> (${largo.toFixed(1)} m × ${anchoMm} mm) registrado exitosamente y vinculado a la factura <strong>${facturaBind}</strong> del ERP BIND.</span>
+          <span>✅ Rollo Madre <strong>${id}</strong> (${largo.toFixed(1)} m × ${anchoMm} mm) registrado exitosamente y vinculado a la orden de compra <strong>${ordenCompra}</strong>.</span>
           <a href="corte.html" class="btn btn-success btn-sm">Ir a Módulo de Corte →</a>
         </div>
       `;
@@ -346,7 +346,7 @@
             <strong>${r.nombre}</strong>
             <div style="font-size:11.5px; color:var(--text-muted);">${r.codigoRef} • ${r.polimero}</div>
           </td>
-          <td class="mono">${r.lote}<br/><span style="color:var(--text-muted); font-weight:400;">${r.facturaBind}</span></td>
+          <td class="mono">${r.lote}<br/><span style="color:var(--text-muted); font-weight:400;">${r.ordenCompra || ''}</span></td>
           <td class="mono">${Number(r.largoInicial).toFixed(1)} m</td>
           <td class="mono"><strong>${Number(r.largoActual).toFixed(1)} m</strong></td>
           <td class="mono">${r.anchoMm} mm × ${r.espesorMm} mm</td>
