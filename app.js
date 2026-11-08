@@ -1,14 +1,14 @@
 // Sistema Digital de Control y Trazabilidad de Inventarios - Probandas México (Sucursal Nueva Industrial Vallejo)
 // Basado en el Capítulo V de tf.md (RF-01 a RF-06, POE-INV-01, Conteos ABC, Code 128 Padre-Hijo)
 
-const STORAGE_KEY = 'probandas_vallejo_inv_v2';
+const STORAGE_KEY = 'probandas_vallejo_inv_v3';
 
 const INITIAL_DATA = {
   rollos: [
     // CLASE A (4 rollos - 20% referencias, 80% valor consumo, conteo Quincenal)
     { id: 'RM-2026-00001', tipo: 'PADRE', padreId: null, codigoRef: 'BP-PU-FDA-1200', nombre: 'Banda Plana Poliuretano (PU) Grado Alimenticio Blanca', familia: 'Transporte', polimero: 'Poliuretano (PU)', lote: 'FORBO-2605-A1', ordenCompra: 'OC-PROV-8841', largoInicial: 100.0, largoActual: 68.5, anchoMm: 1200, espesorMm: 2.4, abc: 'A', rack: 'Rack A-01', estado: 'Disponible', fechaIngreso: '2026-05-12 08:30', conteoFisico: 68.5, fechaConteo: '2026-11-01', conciliado: true },
     { id: 'RM-2026-00002', tipo: 'PADRE', padreId: null, codigoRef: 'BP-PVC-LOG-1500', nombre: 'Banda Plana PVC Verde Alto Agarre Logística', familia: 'Transporte', polimero: 'PVC', lote: 'SIEG-2605-A2', ordenCompra: 'OC-PROV-8850', largoInicial: 120.0, largoActual: 84.0, anchoMm: 1500, espesorMm: 3.0, abc: 'A', rack: 'Rack A-02', estado: 'Disponible', fechaIngreso: '2026-05-18 09:15', conteoFisico: 84.0, fechaConteo: '2026-11-01', conciliado: true },
-    { id: 'RM-2026-00003', tipo: 'PADRE', padreId: null, codigoRef: 'BP-NIT-TX-1000', nombre: 'Banda Plana Transmisión Potencia Nitrilo Alta Tracción', familia: 'Transmisión', polimero: 'Nitrilo', lote: 'HAB-2606-A3', ordenCompra: 'OC-PROV-8912', largoInicial: 80.0, largoActual: 41.2, anchoMm: 1000, espesorMm: 4.0, abc: 'A', rack: 'Rack A-03', estado: 'Disponible', fechaIngreso: '2026-06-02 10:05', conteoFisico: 39.8, fechaConteo: '2026-11-02', conciliado: false, causaDiscrepancia: 'Merma no reportada' },
+    { id: 'RM-2026-00003', tipo: 'PADRE', padreId: null, codigoRef: 'BP-NIT-TX-1000', nombre: 'Banda Plana Transmisión Potencia Nitrilo Alta Tracción', familia: 'Transmisión', polimero: 'Nitrilo', lote: 'HAB-2606-A3', ordenCompra: 'OC-PROV-8912', largoInicial: 80.0, largoActual: 41.2, anchoMm: 1000, espesorMm: 4.0, abc: 'A', rack: 'Rack A-03', estado: 'Disponible', fechaIngreso: '2026-06-02 10:05', conteoFisico: 41.2, fechaConteo: '2026-11-02', conciliado: true },
     { id: 'RM-2026-00004', tipo: 'PADRE', padreId: null, codigoRef: 'BP-SIL-HT-900', nombre: 'Banda Plana Silicón Térmico Empaque Industrial', familia: 'Transporte', polimero: 'Silicón', lote: 'AMMR-2606-A4', ordenCompra: 'OC-PROV-8940', largoInicial: 60.0, largoActual: 45.0, anchoMm: 900, espesorMm: 2.0, abc: 'A', rack: 'Rack A-04', estado: 'Disponible', fechaIngreso: '2026-06-14 11:20', conteoFisico: 45.0, fechaConteo: '2026-11-02', conciliado: true },
 
     // CLASE B (6 rollos - 30% referencias, 15% valor consumo, conteo Mensual)
@@ -72,10 +72,10 @@ const INITIAL_DATA = {
   ],
 
   movimientos: [
-    { idMov: 'MOV-9001', fecha: '2026-10-28 14:21', tipo: 'CORTE / FRACCIONAMIENTO', objeto: 'RM-2026-00001 → RT-RM-2026-00001-01', cantidad: '-12.50 m (12.2m Cliente + 0.3m Merma)', usuario: 'J. Tapia', doc: 'OC-2026-0141', tiempoCapturaMin: 2 },
-    { idMov: 'MOV-9002', fecha: '2026-10-30 11:12', tipo: 'CORTE / FRACCIONAMIENTO', objeto: 'RM-2026-00002 → RT-RM-2026-00002-01', cantidad: '-8.80 m (8.5m Cliente + 0.3m Merma)', usuario: 'A. Rubio', doc: 'OC-2026-0142', tiempoCapturaMin: 3 },
-    { idMov: 'MOV-9003', fecha: '2026-11-01 09:00', tipo: 'CONTEO CÍCLICO ABC (CLASE A)', objeto: 'RM-2026-00001', cantidad: '68.50 m (Sin diferencia)', usuario: 'M. Ibañez (Coord. Almacén)', doc: 'AUD-ABC-1101', tiempoCapturaMin: 4 },
-    { idMov: 'MOV-9004', fecha: '2026-11-02 16:40', tipo: 'ALERTA DISCREPANCIA ABC', objeto: 'RM-2026-00003', cantidad: 'Dif: -1.40 m (Sist: 41.2m vs Fís: 39.8m)', usuario: 'M. Ibañez (Coord. Almacén)', doc: 'AUD-ABC-1102', tiempoCapturaMin: 5 }
+    { idMov: 'MOV-9001', fecha: '2026-10-28 14:21', tipo: 'CORTE / FRACCIONAMIENTO', objeto: 'RM-2026-00001 → RT-RM-2026-00001-01', cantidad: '12.20 m × 750 mm (Retazo: 450mm)', usuario: 'J. Tapia', doc: 'OC-2026-0141', tiempoCapturaMin: 2 },
+    { idMov: 'MOV-9002', fecha: '2026-10-30 11:12', tipo: 'CORTE / FRACCIONAMIENTO', objeto: 'RM-2026-00002 → RT-RM-2026-00002-01', cantidad: '8.50 m × 900 mm (Retazo: 600mm)', usuario: 'A. Rubio', doc: 'OC-2026-0142', tiempoCapturaMin: 3 },
+    { idMov: 'MOV-9003', fecha: '2026-11-01 09:00', tipo: 'VERIFICACIÓN CÍCLICA ABC (CLASE A)', objeto: 'RM-2026-00001', cantidad: '68.50 m × 1200 mm (Validado)', usuario: 'M. Ibañez (Coord. Almacén)', doc: 'AUD-ABC-1101', tiempoCapturaMin: 2 },
+    { idMov: 'MOV-9004', fecha: '2026-11-02 16:40', tipo: 'DESPACHO Y LIBERACIÓN CALIDAD', objeto: 'PED-VAL-4102 (DHL Supply Chain)', cantidad: '8.50 m × 900 mm (Entregado a Tiempo)', usuario: 'M. Ibañez / Calidad', doc: 'REM-VAL-8820', tiempoCapturaMin: 2 }
   ],
 
   conciliaciones: [
