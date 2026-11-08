@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <aside class="sidebar">
+  <aside class="sidebar" aria-label="Navegación principal">
     <div class="brand">
       <span class="brand-badge">PROBANDAS MÉXICO</span>
       <h1>SICT-Banda Plana</h1>
@@ -17,32 +17,47 @@
       <li class="nav-section-label">Inteligencia de Negocios</li>
       <li>
         <a href="index.html">
-          <span>📊 Tablero Ejecutivo KPIs</span>
+          <span>
+            <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+            Tablero Ejecutivo KPIs
+          </span>
           <span class="nav-pcc">RF-06</span>
         </a>
       </li>
       <li class="nav-section-label">Módulos Operativos (POE-INV-01)</li>
       <li>
         <a href="recepcion.html">
-          <span>🏷️ 1. Recepción y Etiquetado</span>
+          <span>
+            <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+            1. Recepción y Etiquetado
+          </span>
           <span class="nav-pcc">PCC-1</span>
         </a>
       </li>
       <li>
-        <a href="corte.html" class="active">
-          <span>✂️ 2. Corte en Piso y Retazos</span>
+        <a href="corte.html" class="active" aria-current="page">
+          <span>
+            <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle><line x1="20" y1="4" x2="8.12" y2="15.88"></line><line x1="14.47" y1="14.48" x2="20" y2="20"></line><line x1="8.12" y1="8.12" x2="12" y2="12"></line></svg>
+            2. Corte en Piso y Retazos
+          </span>
           <span class="nav-pcc">PCC-3</span>
         </a>
       </li>
       <li>
         <a href="consulta.html">
-          <span>🔍 3. Consulta y Trazabilidad</span>
+          <span>
+            <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            3. Consulta y Trazabilidad
+          </span>
           <span class="nav-pcc">PCC-4</span>
         </a>
       </li>
       <li>
         <a href="conteos.html">
-          <span>📋 4. Conteos Cíclicos ABC</span>
+          <span>
+            <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><path d="m9 14 2 2 4-4"></path></svg>
+            4. Conteos Cíclicos ABC
+          </span>
           <span class="nav-pcc">PCC-2</span>
         </a>
       </li>
@@ -50,9 +65,9 @@
     <div class="sidebar-footer">
       <div class="erp-sync-box">
         <div class="erp-sync-status">
-          <span class="dot-online"></span> Terminal Táctil Taller Corte
+          <span class="dot-online" aria-hidden="true"></span> Terminal Táctil Taller Corte
         </div>
-        <div style="margin-top:4px; font-size:11px; color:#94a3b8;">
+        <div style="margin-top:4px; font-size:11.5px; color:#cbd5e1;">
           Lector Óptico Handheld Code 128
         </div>
       </div>
@@ -67,7 +82,10 @@
         <p>Interfaz táctil de 3 pasos • Ecuación de Conservación Dimensional y Genealogía Padre-Hijo (RF-02 y RF-03)</p>
       </div>
       <div class="topbar-actions">
-        <button class="btn btn-outline btn-sm" onclick="simularEscaneoCalidad()">🔊 Probar Alerta Rollo en Calidad (RM-2026-00006)</button>
+        <button class="btn btn-outline btn-sm" onclick="simularEscaneoCalidad()">
+          <svg class="icon-svg icon-sm" viewBox="0 0 24 24" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>
+          Probar Alerta Rollo en Calidad (RM-2026-00006)
+        </button>
       </div>
     </header>
 
@@ -102,10 +120,13 @@
           <form id="formCorte" onsubmit="ejecutarCorte(event)">
             <div class="form-grid">
               <div class="form-group full">
-                <label>Paso 1: Escanear o Seleccionar Rollo Madre / Retazo Origen (Code 128) *</label>
+                <label for="selRolloOrigen">Paso 1: Escanear o Seleccionar Rollo Madre / Retazo Origen (Code 128) *</label>
                 <div style="display:flex; gap:8px;">
                   <select id="selRolloOrigen" onchange="onSelectRollo()" style="flex:1; font-weight:700;"></select>
-                  <button type="button" class="btn btn-outline" onclick=" triggerScanBeep()">🔫 Simular Escaneo</button>
+                  <button type="button" class="btn btn-outline" onclick="triggerScanBeep()">
+                    <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 5v14"></path><path d="M8 5v14"></path><path d="M12 5v14"></path><path d="M17 5v14"></path><path d="M21 5v14"></path></svg>
+                    Simular Escaneo
+                  </button>
                 </div>
               </div>
 
@@ -184,7 +205,8 @@
 
             <div style="display:flex; justify-content:flex-end; gap:10px; margin-top:14px;">
               <button type="submit" id="btnConfirmarCorte" class="btn btn-success btn-lg" style="width:100%;">
-                ✂️ Paso 3: Confirmar Fraccionamiento, Descontar Stock e Imprimir Etiqueta Hijo
+                <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle><line x1="20" y1="4" x2="8.12" y2="15.88"></line><line x1="14.47" y1="14.48" x2="20" y2="20"></line><line x1="8.12" y1="8.12" x2="12" y2="12"></line></svg>
+                Paso 3: Confirmar Fraccionamiento, Descontar Stock e Imprimir Etiqueta Hijo
               </button>
             </div>
           </form>
@@ -197,7 +219,10 @@
               <h3>Etiqueta Automática de Retazo Hijo (Genealogía Padre-Hijo)</h3>
               <span class="subtitle">Estructura Code 128: RT-PADRE-XX • Tipografía de ancho en mm aumentada (Ajuste 5.6.3)</span>
             </div>
-            <button type="button" class="btn btn-outline btn-sm" onclick="printThermalLabel('#thermalHijoPreview')">🖨️ Imprimir Solo Etiqueta</button>
+            <button type="button" class="btn btn-outline btn-sm" onclick="printThermalLabel('#thermalHijoPreview')">
+              <svg class="icon-svg icon-sm" viewBox="0 0 24 24" aria-hidden="true"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+              Imprimir Solo Etiqueta
+            </button>
           </div>
 
           <div class="thermal-label" id="thermalHijoPreview">
@@ -297,11 +322,14 @@
       if (selectedRollo.estado === 'En Inspección de Calidad') {
         playScannerSound('error');
         alertBox.innerHTML = `
-          <div class="alert alert-danger">
-            <div>
-              🚨 <strong>ALERTA SONORA Y BLOQUEO DE CALIDAD (Ajuste Validación 5.6.3):</strong>
-              El rollo escaneado <code>${selectedRollo.id}</code> (${selectedRollo.nombre}) tiene estado
-              <strong>"En Inspección de Calidad"</strong>. No puede fraccionarse hasta su liberación por el Encargado de Calidad.
+          <div class="alert alert-danger" role="alert">
+            <div style="display:flex; align-items:flex-start; gap:10px;">
+              ${iconSvg('alert-triangle')}
+              <div>
+                <strong>ALERTA SONORA Y BLOQUEO DE CALIDAD (Ajuste Validación 5.6.3):</strong>
+                El rollo escaneado <code>${selectedRollo.id}</code> (${selectedRollo.nombre}) tiene estado
+                <strong>"En Inspección de Calidad"</strong>. No puede fraccionarse hasta su liberación por el Encargado de Calidad.
+              </div>
             </div>
             <span class="badge badge-danger">BLOQUEADO PCC-3</span>
           </div>
@@ -495,11 +523,16 @@
       playScannerSound('ok');
 
       document.getElementById('corteAlertBox').innerHTML = `
-        <div class="alert alert-success">
-          <span>✅ <strong>Fraccionamiento registrado en 3 clics:</strong> Rollo <code>${selectedRollo.id}</code> actualizado a <strong>${nuevoSaldoMadre.toFixed(2)} m</strong>. ${generoHijo ? `Se generó Retazo Hijo <code>${codigoHijo}</code> (${largoCliente}m × ${anchoSobrante}mm).` : ''}</span>
+        <div class="alert alert-success" role="status">
+          <span style="display:inline-flex; align-items:center; gap:8px;">
+            ${iconSvg('check-circle')}
+            <span><strong>Fraccionamiento registrado en 3 clics:</strong> Rollo <code>${selectedRollo.id}</code> actualizado a <strong>${nuevoSaldoMadre.toFixed(2)} m</strong>. ${generoHijo ? `Se generó Retazo Hijo <code>${codigoHijo}</code> (${largoCliente}m × ${anchoSobrante}mm).` : ''}</span>
+          </span>
           <div style="display:flex; gap:8px;">
-            <button type="button" class="btn btn-outline btn-sm" onclick="printThermalLabel('#thermalHijoPreview')">🖨️ Imprimir Etiqueta Hijo</button>
-            <a href="consulta.html" class="btn btn-success btn-sm">Ver Genealogía Padre-Hijo →</a>
+            <button type="button" class="btn btn-outline btn-sm" onclick="printThermalLabel('#thermalHijoPreview')">
+              ${iconSvg('printer', 'icon-sm')} Imprimir Etiqueta Hijo
+            </button>
+            <a href="consulta.html" class="btn btn-success btn-sm">Ver Genealogía Padre-Hijo</a>
           </div>
         </div>
       `;

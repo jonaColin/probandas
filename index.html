@@ -120,7 +120,7 @@
 </head>
 <body>
   <!-- Sidebar Navigation -->
-  <aside class="sidebar">
+  <aside class="sidebar" aria-label="Navegación principal">
     <div class="brand">
       <span class="brand-badge">PROBANDAS MÉXICO</span>
       <h1>SICT-Banda Plana</h1>
@@ -129,33 +129,48 @@
     <ul class="nav-links">
       <li class="nav-section-label">Inteligencia de Negocios</li>
       <li>
-        <a href="index.html" class="active">
-          <span>📊 Tablero Ejecutivo KPIs</span>
+        <a href="index.html" class="active" aria-current="page">
+          <span>
+            <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"></line><line x1="12" y1="20" x2="12" y2="4"></line><line x1="6" y1="20" x2="6" y2="14"></line></svg>
+            Tablero Ejecutivo KPIs
+          </span>
           <span class="nav-pcc">RF-06</span>
         </a>
       </li>
       <li class="nav-section-label">Módulos Operativos (POE-INV-01)</li>
       <li>
         <a href="recepcion.html">
-          <span>🏷️ 1. Recepción y Etiquetado</span>
+          <span>
+            <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+            1. Recepción y Etiquetado
+          </span>
           <span class="nav-pcc">PCC-1</span>
         </a>
       </li>
       <li>
         <a href="corte.html">
-          <span>✂️ 2. Corte en Piso y Retazos</span>
+          <span>
+            <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle><line x1="20" y1="4" x2="8.12" y2="15.88"></line><line x1="14.47" y1="14.48" x2="20" y2="20"></line><line x1="8.12" y1="8.12" x2="12" y2="12"></line></svg>
+            2. Corte en Piso y Retazos
+          </span>
           <span class="nav-pcc">PCC-3</span>
         </a>
       </li>
       <li>
         <a href="consulta.html">
-          <span>🔍 3. Consulta y Trazabilidad</span>
+          <span>
+            <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            3. Consulta y Trazabilidad
+          </span>
           <span class="nav-pcc">PCC-4</span>
         </a>
       </li>
       <li>
         <a href="conteos.html">
-          <span>📋 4. Conteos Cíclicos ABC</span>
+          <span>
+            <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path><path d="m9 14 2 2 4-4"></path></svg>
+            4. Conteos Cíclicos ABC
+          </span>
           <span class="nav-pcc">PCC-2</span>
         </a>
       </li>
@@ -163,9 +178,9 @@
     <div class="sidebar-footer">
       <div class="erp-sync-box">
         <div class="erp-sync-status">
-          <span class="dot-online"></span> Sistema en Producción Activo
+          <span class="dot-online" aria-hidden="true"></span> Sistema en Producción Activo
         </div>
-        <div style="margin-top:4px; font-size:11px; color:#94a3b8;">
+        <div style="margin-top:4px; font-size:11.5px; color:#cbd5e1;">
           Sincronización en tiempo real • Planta Vallejo
         </div>
       </div>
@@ -181,8 +196,11 @@
         <p>Monitoreo en tiempo real de rendimiento de corte, rotación de inventario y nivel de servicio • Sucursal Nueva Industrial Vallejo</p>
       </div>
       <div class="topbar-actions">
-        <span class="badge badge-info" id="liveCountBadge">Cargando inventario...</span>
-        <button class="btn btn-outline btn-sm" onclick="resetDemoData()">🔄 Restaurar Datos Demo</button>
+        <span class="badge badge-info" id="liveCountBadge" aria-live="polite">Cargando inventario...</span>
+        <button class="btn btn-outline btn-sm" onclick="resetDemoData()">
+          <svg class="icon-svg icon-sm" viewBox="0 0 24 24" aria-hidden="true"><polyline points="23 4 23 10 17 10"></polyline><polyline points="1 20 1 14 7 14"></polyline><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path></svg>
+          Restaurar Datos Demo
+        </button>
       </div>
     </header>
 
@@ -271,8 +289,14 @@
             <span class="subtitle">Flujo continuo en tiempo real: Recepción → Almacenamiento ABC → Fraccionamiento Padre-Hijo → Despacho</span>
           </div>
           <div style="display:flex; gap:8px;">
-            <a href="corte.html" class="btn btn-primary btn-sm">✂️ Registrar Nuevo Corte</a>
-            <a href="recepcion.html" class="btn btn-outline btn-sm">🏷️ Ingresar Rollo Madre</a>
+            <a href="corte.html" class="btn btn-primary btn-sm">
+              <svg class="icon-svg icon-sm" viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="6" r="3"></circle><circle cx="6" cy="18" r="3"></circle><line x1="20" y1="4" x2="8.12" y2="15.88"></line><line x1="14.47" y1="14.48" x2="20" y2="20"></line><line x1="8.12" y1="8.12" x2="12" y2="12"></line></svg>
+              Registrar Nuevo Corte
+            </a>
+            <a href="recepcion.html" class="btn btn-outline btn-sm">
+              <svg class="icon-svg icon-sm" viewBox="0 0 24 24" aria-hidden="true"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"></path><line x1="7" y1="7" x2="7.01" y2="7"></line></svg>
+              Ingresar Rollo Madre
+            </a>
           </div>
         </div>
         <div class="table-container">

@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <aside class="sidebar">
+  <aside class="sidebar" aria-label="Navegación principal">
     <div class="brand">
       <span class="brand-badge">PROBANDAS MÉXICO</span>
       <h1>SICT-Banda Plana</h1>
@@ -17,32 +17,47 @@
       <li class="nav-section-label">Inteligencia de Negocios</li>
       <li>
         <a href="index.html">
-          <span>📊 Tablero Ejecutivo KPIs</span>
+          <span class="nav-item-text">
+            <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+            Tablero Ejecutivo KPIs
+          </span>
           <span class="nav-pcc">RF-06</span>
         </a>
       </li>
       <li class="nav-section-label">Módulos Operativos (POE-INV-01)</li>
       <li>
         <a href="recepcion.html">
-          <span>🏷️ 1. Recepción y Etiquetado</span>
+          <span class="nav-item-text">
+            <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2H2v10l9.29 9.29c.94.94 2.48.94 3.42 0l6.58-6.58c.94-.94.94-2.48 0-3.42L12 2Z"/><path d="M7 7h.01"/></svg>
+            1. Recepción y Etiquetado
+          </span>
           <span class="nav-pcc">PCC-1</span>
         </a>
       </li>
       <li>
         <a href="corte.html">
-          <span>✂️ 2. Corte en Piso y Retazos</span>
+          <span class="nav-item-text">
+            <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><line x1="20" y1="4" x2="8.12" y2="15.88"/><line x1="14.47" y1="14.48" x2="20" y2="20"/><line x1="8.12" y1="8.12" x2="12" y2="12"/></svg>
+            2. Corte en Piso y Retazos
+          </span>
           <span class="nav-pcc">PCC-3</span>
         </a>
       </li>
       <li>
         <a href="consulta.html">
-          <span>🔍 3. Consulta y Trazabilidad</span>
+          <span class="nav-item-text">
+            <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            3. Consulta y Trazabilidad
+          </span>
           <span class="nav-pcc">PCC-4</span>
         </a>
       </li>
       <li>
-        <a href="conteos.html" class="active">
-          <span>📋 4. Conteos Cíclicos ABC</span>
+        <a href="conteos.html" class="active" aria-current="page">
+          <span class="nav-item-text">
+            <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><rect width="8" height="4" x="8" y="2" rx="1" ry="1"/><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><path d="m9 14 2 2 4-4"/></svg>
+            4. Conteos Cíclicos ABC
+          </span>
           <span class="nav-pcc">PCC-2</span>
         </a>
       </li>
@@ -52,7 +67,7 @@
         <div class="erp-sync-status">
           <span class="dot-online"></span> Programa Preventivo ABC
         </div>
-        <div style="margin-top:4px; font-size:11px; color:#94a3b8;">
+        <div style="margin-top:4px; font-size:11px; color:#cbd5e1;">
           4 Clase A • 6 Clase B • 10 Clase C
         </div>
       </div>
@@ -207,7 +222,8 @@
 
             <div style="margin-top:14px;">
               <button type="submit" class="btn btn-primary btn-lg" style="width:100%;">
-                ✅ Aprobar Conciliación, Ajustar Saldo Auditado y Actualizar ERI
+                <svg class="icon-svg" viewBox="0 0 24 24" aria-hidden="true"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+                Aprobar Conciliación, Ajustar Saldo Auditado y Actualizar ERI
               </button>
             </div>
           </form>
@@ -264,6 +280,7 @@
                 type="number"
                 step="0.1"
                 value="${fis.toFixed(1)}"
+                aria-label="Conteo físico en metros para ${r.id}"
                 style="width:86px; padding:5px 8px; font-weight:700;"
                 onchange="actualizarConteoFisico('${r.id}', this.value)"
               />
@@ -273,13 +290,13 @@
             </td>
             <td>
               ${coincide
-                ? `<span class="badge badge-success">Exacto (ERI ✓)</span>`
-                : `<span class="badge badge-danger">Discrepancia</span>`
+                ? `<span class="badge badge-success">${iconSvg('check', 'icon-sm')} Exacto (ERI)</span>`
+                : `<span class="badge badge-danger">${iconSvg('alert-triangle', 'icon-sm')} Discrepancia</span>`
               }
             </td>
             <td>
               ${!coincide
-                ? `<button class="btn btn-danger btn-sm" onclick="cargarEnProtocolo('${r.id}')">Conciliar →</button>`
+                ? `<button class="btn btn-danger btn-sm" onclick="cargarEnProtocolo('${r.id}')">Conciliar ${iconSvg('arrow-right', 'icon-sm')}</button>`
                 : `<button class="btn btn-outline btn-sm" onclick="cargarEnProtocolo('${r.id}')">Auditar</button>`
               }
             </td>
@@ -372,9 +389,12 @@
 
       const m = calculateMetrics(state);
       document.getElementById('conciliacionAlert').innerHTML = `
-        <div class="alert alert-success">
-          <span>✅ <strong>Protocolo de Conciliación completado (${folioConc}):</strong> El rollo <code>${id}</code> quedó conciliado a <strong>${conteoFis.toFixed(2)} m</strong> bajo causa raíz <em>"${causa}"</em>. El Índice ERI subió a <strong>${m.eri}%</strong>.</span>
-          <a href="index.html" class="btn btn-success btn-sm">Ver impacto en Tablero KPIs →</a>
+        <div class="alert alert-success" role="status">
+          <span style="display:inline-flex; align-items:center; gap:8px;">
+            ${iconSvg('check-circle')}
+            <span><strong>Protocolo de Conciliación completado (${folioConc}):</strong> El rollo <code>${id}</code> quedó conciliado a <strong>${conteoFis.toFixed(2)} m</strong> bajo causa raíz <em>"${causa}"</em>. El Índice ERI subió a <strong>${m.eri}%</strong>.</span>
+          </span>
+          <a href="index.html" class="btn btn-success btn-sm">Ver impacto en Tablero KPIs ${iconSvg('arrow-right', 'icon-sm')}</a>
         </div>
       `;
 
